@@ -1,0 +1,348 @@
+import React, { useState } from "react";
+import { StyleSheet, Text, View, Pressable } from "react-native";
+import moment from "moment";
+import AntDesign from "react-native-vector-icons/AntDesign";
+import request from "@/utils/request";
+import { useRouter } from "expo-router";
+import { APP_URL } from "@/config/Path";
+import { useIncomming } from "@/provider/IncommingContext";
+import { Entypo } from "@expo/vector-icons";
+
+interface NotificationItem {
+  _id: string;
+  title: string;
+  content: string | null;
+  date: string;
+  isRead: boolean;
+  senderId?: string;
+  subCode?: string;
+  docId?: string;
+  link?: string;
+  metaData?: {
+    name?: string;
+    description?: string;
+  };
+}
+interface Profile {
+  _id: string;
+  avatar: string | null;
+  gender: string;
+}
+
+const RenderItem: React.FC<{
+  item: NotificationItem;
+  profile: Profile;
+}> = ({ item, profile }) => {
+  const [isReadLocal, setIsReadLocal] = useState<boolean>(item.isRead);
+  const router = useRouter();
+
+  const updateNotifications = async () => {
+    try {
+      const appUrl = await APP_URL();
+      const url = `${appUrl}/api/notifications/${item._id}`;
+      const body = {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...item, isRead: true }),
+      };
+      const response = await request(url, body);
+      return response?._id;
+    } catch (err) {
+      console.error("Lỗi khi cập nhật thông báo:", err);
+    }
+  };
+
+  // === SỬA MỚI: Hàm thông minh tự đoán loại thông báo nếu Backend gửi subCode bị trống hoặc khác tên chuẩn ===
+  const getResolvedSubCode = (item: NotificationItem): string => {
+    if (item.subCode) {
+      const code = item.subCode;
+      // Nhận diện mã Lịch từ Backend (nhiều biến thể tên khác nhau)
+      if (
+        code === "Calendar" ||
+        code === "WorkingCalendar" ||
+        code === "MeetingCalendar" ||
+        code === "CalendarWeek"
+      )
+        return "Calendar";
+
+      // Nhận diện mã Công việc / Task từ Backend
+      if (
+        code === "Task" ||
+        code === "TaskWork" ||
+        code === "HSCV" ||
+        code === "ProjectTask"
+      )
+        return "Task";
+      if (code === "IncommingDocument") return "IncommingDocument";
+      if (code === "OutGoingDocument") return "OutGoingDocument";
+      if (code === "InternalDocument") return "InternalDocument";
+      if (code === "Letter") return "Letter";
+      return code;
+    }
+
+    // Tự động phân tích từ khóa trong tiêu đề, nội dung hoặc link nếu subCode bị thiếu (Fallback)
+    const fullText = `${item.title || ""} ${item.content || ""} ${item.link || ""} ${
+      item.metaData?.name || ""
+    } ${item.metaData?.description || ""}`.toLowerCase();
+
+    if (
+      fullText.includes("lịch") ||
+      fullText.includes("lịch họp") ||
+      fullText.includes("lịch tuần") ||
+      fullText.includes("lịch làm việc") ||
+      fullText.includes("phòng họp") ||
+      fullText.includes("calendar") ||
+      fullText.includes("officecalendar")
+    ) {
+      return "Calendar";
+    }
+
+    if (
+      fullText.includes("công việc") ||
+      fullText.includes("giao việc") ||
+      fullText.includes("hồ sơ công việc") ||
+      fullText.includes("nhiệm vụ") ||
+      fullText.includes("hscv") ||
+      fullText.includes("task") ||
+      fullText.includes("dự án")
+    ) {
+      return "Task";
+    }
+
+    if (
+      fullText.includes("văn bản đi") ||
+      fullText.includes("phát hành") ||
+      fullText.includes("outgoing")
+    ) {
+      return "OutGoingDocument";
+    }
+
+    if (
+      fullText.includes("văn bản đến") ||
+      fullText.includes("văn bản") ||
+      fullText.includes("incomming")
+    ) {
+      return "IncommingDocument";
+    }
+
+    return "";
+  };
+
+  const getNotificationType = () => {
+    if (item.link?.startsWith("/message/")) {
+      return "Tin nhắn"; // loại chat
+    }
+    // SỬA MỚI: Dùng mã đã được giải mã thông minh phía trên
+    const resolvedCode = getResolvedSubCode(item);
+    switch (resolvedCode) {
+      case "IncommingDocument":
+        return "Văn bản đến";
+      case "OutGoingDocument":
+        return "Văn bản đi";
+      case "InternalDocument":
+        return "Văn bản nội bộ";
+      case "Calendar":
+        return "Lịch làm việc / Lịch tuần";
+      case "Task":
+        return "Hồ sơ công việc";
+      case "Letter":
+        return "Văn bản bị thu hồi";
+      default:
+        return "Thông báo";
+    }
+  };
+
+  const handleLinkPress = async () => {
+    if (!item.isRead) {
+      setIsReadLocal(true);
+      // SỬA MỚI: Cho gọi cập nhật trạng thái đã đọc chạy ngầm (non-blocking), tránh gây treo đơ chuyển màn hình
+      updateNotifications().catch((err) =>
+        console.error("Lỗi cập nhật trạng thái đã đọc:", err)
+      );
+    }
+    // Nếu là chat
+    if (item.link?.startsWith("/message/")) {
+      const messageId = item.link.split("/").pop();
+      if (messageId) {
+        router.push({
+          pathname: `/(tabs)/chat/${messageId}`,
+          params: {
+            messageId,
+          },
+        });
+        return;
+      }
+    }
+
+    // SỬA MỚI: Bỏ câu lệnh `if (!item.subCode) return;` cũ để không bị hủy sự kiện click
+    const resolvedCode = getResolvedSubCode(item);
+
+    let id = item.link?.split("/").pop() || "";
+    let _id = item.docId || "";
+    let basePath: string;
+
+    switch (resolvedCode) {
+      case "Calendar":
+        basePath = "/(tabs)/home/officeCalendar/processing";
+        break;
+      case "Task":
+        basePath = "/(tabs)/home/hscvTab/hscvHandle";
+        break;
+      case "IncommingDocument":
+        basePath = "/(tabs)/home/tabIncomming/incommingViewer";
+        break;
+      case "OutGoingDocument":
+        basePath = "/(tabs)/home/tabOutgoing/outgoingDocument";
+        break;
+      default:
+        basePath = "/(tabs)/home/notify";
+        break;
+    }
+
+    const finalId = id || _id;
+    // SỬA MỚI: Xử lý an toàn đường dẫn (nếu có id thì tới trang chi tiết, nếu không có id thì tới trang danh sách, không để thừa dấu /)
+    const finalPath = finalId ? `${basePath}/${finalId}` : basePath;
+
+    try {
+      // SỬA MỚI: Dùng router.push thay cho router.replace để có nút Back quay lại danh sách thông báo
+      router.push({
+        pathname: finalPath as any,
+        params: {
+          id: finalId,
+          _id: _id,
+          subCode: resolvedCode || item.subCode,
+          name: item.title,
+          content: item.content || "",
+          date: item.date,
+          fromScreen: "notify",
+        },
+      });
+    } catch (e) {
+      console.error("Lỗi chuyển màn hình thông báo:", e);
+    }
+  };
+
+  // SỬA MỚI: Kiểm tra hiển thị metadata theo subCode đã qua xử lý
+  const showMetaData = [
+    "Task",
+    "IncommingDocument",
+    "OutGoingDocument",
+    "InternalDocument",
+    "Letter",
+    "Calendar",
+  ].includes(getResolvedSubCode(item));
+
+  return (
+    <Pressable
+      onPress={() => {
+        handleLinkPress();
+      }}
+      style={[
+        styles.itemContainer,
+        { backgroundColor: isReadLocal ? "#fff" : "#e6f7ff" },
+      ]}
+    >
+      <View style={styles.rowContainer}>
+        <View style={styles.content}>
+          {showMetaData && item.metaData ? (
+            <Text style={styles.title} numberOfLines={2}>
+              {/* {/(bị trả lại|cần xử lý|cần phối hợp)$/.test(item.title)
+                ? item.title.replace(/(bị trả lại|cần xử lý|cần phối hợp)$/, "").trim()
+                : item.title}: {" "}
+              {item.metaData.description} */}
+              {item.title.startsWith("Đồng chí ")
+                ? item.title.replace(/^Đồng chí /, "Bạn ")
+                : `${item.title}`}
+              {": "}"{item.metaData.description}"
+            </Text>
+          ) : (
+            <Text style={styles.title} numberOfLines={2}>
+              {item.title.startsWith("Đồng chí ")
+                ? item.title.replace(/^Đồng chí /, "Bạn ")
+                : ` ${item.title}`}
+            </Text>
+          )}
+
+          <View style={styles.typeContainer}>
+            <Text style={styles.typeLabel}>Loại thông báo: </Text>
+            <Text style={styles.typeValue}>{getNotificationType()}</Text>
+          </View>
+
+          <View style={styles.footer}>
+            <Entypo
+              name="clock"
+              size={12}
+              color="#888"
+              style={styles.clockIcon}
+            />
+            <Text style={styles.timestamp}>
+              {moment(item.date).format("DD/MM/YYYY HH:mm")}
+            </Text>
+          </View>
+        </View>
+      </View>
+    </Pressable>
+  );
+};
+
+export default RenderItem;
+
+const styles = StyleSheet.create({
+  itemContainer: {
+    padding: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: "#e8e8e8",
+    borderRadius: 8,
+    marginHorizontal: 10,
+    marginTop: 5,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 2,
+    elevation: 1,
+  },
+  rowContainer: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+  },
+  content: {
+    flex: 1,
+  },
+  title: {
+    fontSize: 16,
+    fontWeight: "700",
+    color: "#222",
+    marginBottom: 4,
+  },
+  typeContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 6,
+  },
+  typeLabel: {
+    fontSize: 12,
+    color: "#666",
+  },
+  typeValue: {
+    fontSize: 12,
+    color: "#1890ff",
+    fontWeight: "600",
+  },
+  message: {
+    fontSize: 14,
+    color: "#444",
+    lineHeight: 20,
+  },
+  footer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 10,
+  },
+  clockIcon: {
+    marginRight: 6,
+  },
+  timestamp: {
+    fontSize: 12,
+    color: "#888",
+  },
+});
