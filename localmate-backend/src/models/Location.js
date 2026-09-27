@@ -32,5 +32,6 @@ const locationSchema = new mongoose.Schema({
 locationSchema.index({ coordinates: '2dsphere' });
 locationSchema.index({ city: 1, category: 1 });
 locationSchema.index({ isActive: 1, ratingAvg: -1 });
+locationSchema.index({ name: 'text', description: 'text', city: 'text' });
 
 module.exports = mongoose.model('Location', locationSchema);

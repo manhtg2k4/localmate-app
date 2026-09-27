@@ -15,10 +15,15 @@ const Message = require('./models/Message');
 const Notification = require('./models/Notification');
 const Bookmark = require('./models/Bookmark');
 
-const seed = async () => {
-  const uri = process.env.MONGODB_URI || 'mongodb://localhost:27017/localmate';
-  await mongoose.connect(uri);
-  console.log('🌱 Connected to MongoDB for comprehensive seeding...');
+const seedDatabase = async () => {
+  const isStandalone = mongoose.connection.readyState !== 1;
+  if (isStandalone) {
+    const uri = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/localmate';
+    await mongoose.connect(uri);
+    console.log('🌱 Connected to MongoDB for comprehensive seeding...');
+  } else {
+    console.log('🌱 Seeding database on active connection...');
+  }
 
   // 1. Clear existing database collections
   await Promise.all([
@@ -1125,10 +1130,16 @@ const seed = async () => {
   console.log('💰 Payouts:         4 Withdrawal Requests (Pending & Completed for Admin Reports testing)');
   console.log('======================================================\n');
 
-  await mongoose.disconnect();
+  if (isStandalone) {
+    await mongoose.disconnect();
+  }
 };
 
-seed().catch(err => {
-  console.error('❌ Error during seeding:', err);
-  process.exit(1);
-});
+if (require.main === module) {
+  seedDatabase().catch(err => {
+    console.error('❌ Error during seeding:', err);
+    process.exit(1);
+  });
+}
+
+module.exports = { seedDatabase };

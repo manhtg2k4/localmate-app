@@ -3,6 +3,10 @@
   "version": "1.0.0",
   "description": "LocalMate Travel Guide Marketplace",
   "scripts": {
+    "backend:dev": "cd localmate-backend && npm run dev",
+    "backend:start": "cd localmate-backend && npm start",
+    "backend:seed": "cd localmate-backend && npm run seed",
+    "admin:dev": "cd localmate-admin && npm run dev",
     "test:e2e": "cd localmate-admin && npx playwright test",
     "test:e2e:ui": "cd localmate-admin && npx playwright test --ui",
     "test:e2e:report": "cd localmate-admin && npx playwright show-report",
