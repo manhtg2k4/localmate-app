@@ -198,7 +198,7 @@ export default function Layout() {
               />
             </Badge>
 
-            <Dropdown menu={userMenu} placement="bottomRight" arrow={{ pointAtCenter: true }}>
+            <Dropdown menu={userMenu} trigger={['click', 'hover']} placement="bottomRight" arrow={{ pointAtCenter: true }}>
               <Space style={{ cursor: 'pointer' }}>
                 <Avatar style={{
                   background: 'linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)',

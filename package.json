@@ -1,0 +1,11 @@
+{
+  "name": "localmate-ecosystem",
+  "version": "1.0.0",
+  "description": "LocalMate Travel Guide Marketplace",
+  "scripts": {
+    "test:e2e": "cd localmate-admin && npx playwright test",
+    "test:e2e:ui": "cd localmate-admin && npx playwright test --ui",
+    "test:e2e:report": "cd localmate-admin && npx playwright show-report",
+    "test:scenarios": "node localmate-admin/scripts/generate-scenarios.js"
+  }
+}

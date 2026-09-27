@@ -60,3 +60,9 @@ temp/
 .agents/
 */.agents/
 
+# Playwright Test Outputs
+playwright-report/
+*/playwright-report/
+test-results/
+*/test-results/
+
