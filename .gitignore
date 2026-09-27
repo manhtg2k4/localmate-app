@@ -55,3 +55,8 @@ build/
 # Temporary Files
 tmp/
 temp/
+
+# Agent Skills
+.agents/
+*/.agents/
+
