@@ -46,94 +46,111 @@ export default function Bookings() {
 
   const columns = [
     {
-      title: 'Booking ID',
+      title: 'Mã đặt tour',
       dataIndex: '_id',
       key: 'id',
-      render: (id: string) => <Tag color="geekblue" style={{ fontWeight: 600 }}>#{id.slice(-6).toUpperCase()}</Tag>
+      width: 130,
+      render: (id: string) => <Tag color="geekblue" style={{ fontWeight: 600, whiteSpace: 'nowrap' }}>#{id.slice(-6).toUpperCase()}</Tag>
     },
     {
-      title: 'Tourist',
+      title: 'Khách du lịch',
       key: 'tourist',
+      width: 220,
       render: (_: any, r: any) => (
-        <Space>
-          <Avatar style={{ backgroundColor: '#6366F1' }}>
+        <Space style={{ whiteSpace: 'nowrap' }}>
+          <Avatar style={{ backgroundColor: '#6366F1', flexShrink: 0 }}>
             {r.touristId?.fullName?.[0] || 'T'}
           </Avatar>
           <div>
-            <Text strong style={{ display: 'block', fontSize: 13 }}>{r.touristId?.fullName || 'N/A'}</Text>
-            <Text type="secondary" style={{ fontSize: 11 }}>{r.touristId?.email}</Text>
+            <Text strong style={{ display: 'block', fontSize: 13, whiteSpace: 'nowrap' }}>{r.touristId?.fullName || 'N/A'}</Text>
+            <Text type="secondary" style={{ fontSize: 11, whiteSpace: 'nowrap' }}>{r.touristId?.email}</Text>
           </div>
         </Space>
       )
     },
     {
-      title: 'Guide Assigned',
+      title: 'HDV phụ trách',
       key: 'guide',
+      width: 200,
       render: (_: any, r: any) => (
-        <Space>
-          <Avatar style={{ backgroundColor: '#10B981' }}>
+        <Space style={{ whiteSpace: 'nowrap' }}>
+          <Avatar style={{ backgroundColor: '#10B981', flexShrink: 0 }}>
             {r.guideId?.userId?.fullName?.[0] || 'G'}
           </Avatar>
           <div>
-            <Text strong style={{ display: 'block', fontSize: 13 }}>{r.guideId?.userId?.fullName || 'Unassigned'}</Text>
-            <Text type="secondary" style={{ fontSize: 11 }}>{r.guideId?.userId?.email}</Text>
+            <Text strong style={{ display: 'block', fontSize: 13, whiteSpace: 'nowrap' }}>{r.guideId?.userId?.fullName || 'Chưa phân công'}</Text>
+            <Text type="secondary" style={{ fontSize: 11, whiteSpace: 'nowrap' }}>{r.guideId?.userId?.email}</Text>
           </div>
         </Space>
       )
     },
     {
-      title: 'Destination',
+      title: 'Điểm tham quan',
       key: 'location',
+      width: 200,
       render: (_: any, r: any) => (
-        <Space>
-          <EnvironmentOutlined style={{ color: '#0EA5E9' }} />
-          <Text style={{ fontSize: 13 }}>{r.locationId?.name ? `${r.locationId.name} (${r.locationId.city})` : 'Custom Tour'}</Text>
+        <Space style={{ whiteSpace: 'nowrap' }}>
+          <EnvironmentOutlined style={{ color: '#0EA5E9', flexShrink: 0 }} />
+          <Text style={{ fontSize: 13, whiteSpace: 'nowrap' }}>{r.locationId?.name ? `${r.locationId.name} (${r.locationId.city})` : 'Tour tự chọn'}</Text>
         </Space>
       )
     },
     {
-      title: 'Scheduled Date',
+      title: 'Ngày khởi hành',
       dataIndex: 'bookingDate',
       key: 'date',
+      width: 150,
       render: (d: string) => (
-        <Space>
+        <Space style={{ whiteSpace: 'nowrap' }}>
           <CalendarOutlined style={{ color: '#94a3b8' }} />
-          <Text>{new Date(d).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</Text>
+          <Text>{new Date(d).toLocaleDateString('vi-VN')}</Text>
         </Space>
       )
     },
     {
-      title: 'Total Price',
+      title: 'Tổng tiền',
       dataIndex: 'totalAmount',
       key: 'amount',
+      width: 140,
       render: (a: number, r: any) => (
-        <div>
+        <div style={{ whiteSpace: 'nowrap' }}>
           <Text strong style={{ color: '#0F172A', fontSize: 14 }}>
             ${a?.toFixed(2)}
           </Text>
           <Text type="secondary" style={{ display: 'block', fontSize: 11 }}>
-            (Fee: ${r.platformFee?.toFixed(2) || '0.00'})
+            (Phí sàn: ${r.platformFee?.toFixed(2) || '0.00'})
           </Text>
         </div>
       )
     },
     {
-      title: 'Status',
+      title: 'Trạng thái',
       dataIndex: 'status',
       key: 'status',
-      render: (s: string) => <Tag color={STATUS_COLORS[s] || 'default'}>{s}</Tag>
+      width: 140,
+      render: (s: string) => {
+        const labels: Record<string, string> = {
+          PENDING: 'Chờ duyệt',
+          CONFIRMED: 'Đã xác nhận',
+          COMPLETED: 'Hoàn thành',
+          CANCELLED: 'Đã hủy',
+          REJECTED: 'Bị từ chối'
+        };
+        return <Tag color={STATUS_COLORS[s] || 'default'} style={{ whiteSpace: 'nowrap' }}>{labels[s] || s}</Tag>;
+      }
     },
     {
-      title: 'Actions',
+      title: 'Thao tác',
       key: 'actions',
+      width: 100,
       render: (_: any, record: any) => (
         <Button
           icon={<EyeOutlined />}
           size="small"
           onClick={() => setSelected(record)}
-          style={{ borderRadius: 6 }}
+          style={{ borderRadius: 6, whiteSpace: 'nowrap' }}
         >
-          Details
+          Chi tiết
         </Button>
       )
     }
@@ -143,31 +160,31 @@ export default function Bookings() {
     <div className="animate-fade-in">
       <Card style={{ marginBottom: 24, borderRadius: 16 }}>
         <Row justify="space-between" align="middle" gutter={[16, 16]}>
-          <Col>
+          <Col xs={24} md={14}>
             <Title level={3} style={{ margin: '0 0 4px 0', fontWeight: 700 }}>
-              Booking Management ({total})
+              Quản lý đặt tour ({total})
             </Title>
             <Text type="secondary">
-              Track tour reservations, payment statuses, destination locations, and schedule details.
+              Theo dõi danh sách đặt tour, trạng thái thanh toán, điểm đến và lịch trình tham quan.
             </Text>
           </Col>
-          <Col>
-            <Space>
+          <Col xs={24} md={10} style={{ textAlign: 'right' }}>
+            <Space wrap>
               <Select
-                value={status || 'All Statuses'}
-                onChange={v => { setStatus(v === 'All Statuses' ? '' : v); setPage(1); }}
-                style={{ width: 180 }}
+                value={status || 'Tất cả trạng thái'}
+                onChange={v => { setStatus(v === 'Tất cả trạng thái' ? '' : v); setPage(1); }}
+                style={{ width: 170 }}
                 options={[
-                  { value: 'All Statuses', label: 'All Statuses' },
-                  { value: 'PENDING', label: 'Pending' },
-                  { value: 'CONFIRMED', label: 'Confirmed' },
-                  { value: 'COMPLETED', label: 'Completed' },
-                  { value: 'CANCELLED', label: 'Cancelled' },
-                  { value: 'REJECTED', label: 'Rejected' }
+                  { value: 'Tất cả trạng thái', label: 'Tất cả trạng thái' },
+                  { value: 'PENDING', label: 'Chờ duyệt' },
+                  { value: 'CONFIRMED', label: 'Đã xác nhận' },
+                  { value: 'COMPLETED', label: 'Hoàn thành' },
+                  { value: 'CANCELLED', label: 'Đã hủy' },
+                  { value: 'REJECTED', label: 'Bị từ chối' }
                 ]}
               />
               <Button icon={<SyncOutlined spin={loading} />} onClick={loadBookings} style={{ borderRadius: 8 }}>
-                Refresh
+                Làm mới
               </Button>
             </Space>
           </Col>
@@ -181,12 +198,13 @@ export default function Bookings() {
           rowKey="_id"
           loading={loading}
           pagination={{ current: page, total, pageSize: 10, onChange: setPage }}
+          scroll={{ x: 1000 }}
         />
       </Card>
 
       {/* Booking Details Modal */}
       <Modal
-        title={`Booking Details #${selected?._id?.slice(-6).toUpperCase()}`}
+        title={`Chi tiết đơn tour #${selected?._id?.slice(-6).toUpperCase()}`}
         open={!!selected}
         onCancel={() => setSelected(null)}
         footer={null}
@@ -195,41 +213,41 @@ export default function Bookings() {
         {selected && (
           <div style={{ paddingTop: 12 }}>
             <Descriptions bordered column={2}>
-              <Descriptions.Item label="Tourist" span={2}>
+              <Descriptions.Item label="Khách du lịch" span={2}>
                 <Space>
                   <UserOutlined />
                   <span>{selected.touristId?.fullName} ({selected.touristId?.email})</span>
                 </Space>
               </Descriptions.Item>
-              <Descriptions.Item label="Guide" span={2}>
+              <Descriptions.Item label="Hướng dẫn viên" span={2}>
                 <Space>
                   <TeamOutlined />
-                  <span>{selected.guideId?.userId?.fullName || 'Unassigned'} ({selected.guideId?.userId?.email || 'N/A'})</span>
+                  <span>{selected.guideId?.userId?.fullName || 'Chưa phân công'} ({selected.guideId?.userId?.email || 'N/A'})</span>
                 </Space>
               </Descriptions.Item>
-              <Descriptions.Item label="Destination" span={2}>
+              <Descriptions.Item label="Điểm tham quan" span={2}>
                 <Space>
                   <EnvironmentOutlined />
-                  <span>{selected.locationId?.name ? `${selected.locationId.name} (${selected.locationId.city})` : 'Custom Itinerary'}</span>
+                  <span>{selected.locationId?.name ? `${selected.locationId.name} (${selected.locationId.city})` : 'Lịch trình tùy chọn'}</span>
                 </Space>
               </Descriptions.Item>
-              <Descriptions.Item label="Tour Date">
-                {new Date(selected.bookingDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+              <Descriptions.Item label="Ngày khởi hành">
+                {new Date(selected.bookingDate).toLocaleDateString('vi-VN')}
               </Descriptions.Item>
-              <Descriptions.Item label="Time Window">
+              <Descriptions.Item label="Khung giờ">
                 <ClockCircleOutlined /> {selected.startTime || '09:00'} - {selected.endTime || '17:00'}
               </Descriptions.Item>
-              <Descriptions.Item label="Total Amount">
+              <Descriptions.Item label="Tổng tiền">
                 <strong style={{ color: '#10b981', fontSize: 16 }}>${selected.totalAmount?.toFixed(2)}</strong>
               </Descriptions.Item>
-              <Descriptions.Item label="Status">
+              <Descriptions.Item label="Trạng thái">
                 <Tag color={STATUS_COLORS[selected.status]}>{selected.status}</Tag>
               </Descriptions.Item>
-              <Descriptions.Item label="Special Requests" span={2}>
-                {selected.specialRequests || selected.notes || 'No special requests provided by tourist.'}
+              <Descriptions.Item label="Yêu cầu đặc biệt" span={2}>
+                {selected.specialRequests || selected.notes || 'Không có yêu cầu đặc biệt từ khách.'}
               </Descriptions.Item>
               {selected.cancelReason && (
-                <Descriptions.Item label="Cancellation Reason" span={2}>
+                <Descriptions.Item label="Lý do hủy tour" span={2}>
                   <Text type="danger">{selected.cancelReason}</Text>
                 </Descriptions.Item>
               )}

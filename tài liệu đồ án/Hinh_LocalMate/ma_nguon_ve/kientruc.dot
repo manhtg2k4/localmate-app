@@ -1,0 +1,24 @@
+digraph G {
+  rankdir=TB; nodesep=0.35; ranksep=0.6; compound=true;
+  fontname="DejaVu Sans"; node [fontname="DejaVu Sans", fontsize=13, shape=box, style="rounded,filled", fillcolor="#F4F6FA", color="#5B6B8C", margin="0.18,0.1"]; edge [fontname="DejaVu Sans", fontsize=11, color="#555555"];
+  subgraph cluster_c { label="Tầng ứng dụng khách"; style="rounded"; color="#9AA5B8"; fontsize=13;
+    M [label="Mobile App\nReact Native + Expo + TypeScript\n(Du khách / Hướng dẫn viên)"];
+    A [label="Web Admin\nReact + Vite + Ant Design\n(Quản trị viên)"]; }
+  subgraph cluster_b { label="Backend: Node.js + Express"; style="rounded"; color="#9AA5B8"; fontsize=13;
+    R [label="REST API /api/v1\nJWT · phân quyền · rate limit · Helmet"];
+    S [label="Socket.IO\nchat · sự kiện đơn đặt"];
+    J [label="Cron Jobs\ntự từ chối đơn · giải ngân escrow"];
+    SV [label="Services\nPayment · AI · Notification · Email", fillcolor="#E7EEF9"]; }
+  DB [label="MongoDB\n(12 collection)", shape=cylinder, fillcolor="#FFF4DC", color="#B8913A"];
+  subgraph cluster_e { label="Dịch vụ bên ngoài"; style="rounded"; color="#9AA5B8"; fontsize=13;
+    ST [label="Stripe\nthanh toán"]; CLD [label="Cloudinary\nlưu ảnh"]; FCM [label="Firebase FCM\nthông báo đẩy"];
+    AI [label="Claude API\ngợi ý địa điểm"]; N8 [label="n8n Webhook\nchatbot hỗ trợ"]; SM [label="SMTP\nNodemailer"]; }
+  M -> R [label=" HTTPS/JSON"]; A -> R [label=" HTTPS/JSON"]; M -> S [label=" WebSocket"];
+  R -> SV; S -> SV; J -> SV;
+  R -> DB; S -> DB; J -> DB;
+  SV -> ST; SV -> CLD; SV -> FCM; SV -> AI; SV -> N8; SV -> SM;
+  {rank=same; M; A}
+  {rank=same; R; S; J}
+  {rank=same; SV; DB}
+  {rank=same; ST; CLD; FCM; AI; N8; SM}
+}

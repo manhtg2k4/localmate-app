@@ -1,0 +1,11 @@
+stateDiagram-v2
+  direction LR
+  [*] --> PENDING: Du khách tạo đơn<br/>(expiresAt = +30 phút)
+  PENDING --> CONFIRMED: HDV xác nhận /<br/>thanh toán thành công
+  PENDING --> REJECTED: HDV từ chối /<br/>quá 30 phút (cron)
+  PENDING --> CANCELLED: Du khách hủy
+  CONFIRMED --> CANCELLED: Hủy (hoàn tiền theo chính sách)
+  CONFIRMED --> COMPLETED: HDV hoàn thành tour
+  REJECTED --> [*]
+  CANCELLED --> [*]
+  COMPLETED --> [*]

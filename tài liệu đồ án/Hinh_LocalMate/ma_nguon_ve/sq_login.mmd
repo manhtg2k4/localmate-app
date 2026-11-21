@@ -1,0 +1,21 @@
+sequenceDiagram
+  actor U as Người dùng
+  participant M as Mobile App
+  participant API as Backend API
+  participant DB as MongoDB
+  U->>M: Nhập email, mật khẩu
+  M->>API: POST /auth/login
+  API->>DB: Tìm User (chưa xóa, chưa bị khóa)
+  DB-->>API: User
+  API->>API: bcrypt.compare(mật khẩu, passwordHash)
+  alt Hợp lệ
+    API->>API: Sinh accessToken (1h) và refreshToken (7d)
+    API->>DB: Lưu refreshToken (giữ tối đa 5)
+    API-->>M: 200 {accessToken, refreshToken, user}
+    M->>M: Lưu token vào SecureStore
+    M-->>U: Chuyển màn hình theo role (TOURIST / GUIDE)
+  else Sai thông tin hoặc bị khóa
+    API-->>M: 401 Invalid email or password
+    M-->>U: Hiển thị thông báo lỗi
+  end
+  Note over M,API: Khi token hết hạn (401), interceptor gọi POST /auth/refresh,<br/>xoay vòng refreshToken rồi gửi lại yêu cầu ban đầu

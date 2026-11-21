@@ -1,0 +1,90 @@
+erDiagram
+  USER ||--o| GUIDE_PROFILE : "có hồ sơ HDV"
+  USER ||--o{ BOOKING : "đặt tour"
+  GUIDE_PROFILE ||--o{ BOOKING : "nhận đơn"
+  LOCATION |o--o{ BOOKING : "diễn ra tại"
+  BOOKING ||--o| PAYMENT : "thanh toán"
+  BOOKING ||--o| REVIEW : "được đánh giá"
+  BOOKING ||--o{ MESSAGE : "trao đổi"
+  GUIDE_PROFILE ||--o{ REVIEW : "nhận"
+  USER ||--o{ REVIEW : "viết"
+  GUIDE_PROFILE ||--|| WALLET : "sở hữu"
+  GUIDE_PROFILE ||--o{ WITHDRAWAL_REQUEST : "yêu cầu rút"
+  GUIDE_PROFILE ||--o{ GUIDE_SCHEDULE : "lịch rảnh"
+  USER ||--o{ NOTIFICATION : "nhận"
+  USER ||--o{ BOOKMARK : "lưu"
+  USER ||--o{ MESSAGE : "gửi/nhận"
+  USER {
+    ObjectId _id PK
+    string email UK
+    string fullName
+    enum role
+    boolean isBlocked
+  }
+  GUIDE_PROFILE {
+    ObjectId _id PK
+    ObjectId userId FK
+    number hourlyRate
+    number ratingAvg
+    boolean isApproved
+  }
+  LOCATION {
+    ObjectId _id PK
+    string name
+    enum category
+    string city
+    geojson coordinates
+  }
+  BOOKING {
+    ObjectId _id PK
+    ObjectId touristId FK
+    ObjectId guideId FK
+    ObjectId locationId FK
+    enum status
+    number totalAmount
+  }
+  PAYMENT {
+    ObjectId _id PK
+    ObjectId bookingId FK
+    number amount
+    enum status
+  }
+  REVIEW {
+    ObjectId _id PK
+    ObjectId bookingId FK
+    ObjectId guideId FK
+    number rating
+  }
+  MESSAGE {
+    ObjectId _id PK
+    ObjectId bookingId FK
+    ObjectId senderId FK
+    ObjectId receiverId FK
+    string text
+  }
+  WALLET {
+    ObjectId _id PK
+    ObjectId guideId FK
+    number balance
+  }
+  WITHDRAWAL_REQUEST {
+    ObjectId _id PK
+    ObjectId guideId FK
+    number amount
+    enum status
+  }
+  GUIDE_SCHEDULE {
+    ObjectId _id PK
+    ObjectId guideId FK
+    date date
+  }
+  NOTIFICATION {
+    ObjectId _id PK
+    ObjectId userId FK
+    enum type
+  }
+  BOOKMARK {
+    ObjectId _id PK
+    ObjectId userId FK
+    ObjectId targetId FK
+  }

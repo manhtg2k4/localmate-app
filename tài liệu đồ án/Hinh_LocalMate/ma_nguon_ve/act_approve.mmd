@@ -1,0 +1,12 @@
+flowchart LR
+  s(["Bắt đầu"]) --> a["Admin mở trang Guide Approval"]
+  a --> b["Hệ thống tải danh sách HDV chưa duyệt<br/>(GET /admin/guides/pending)"]
+  b --> c["Admin xem hồ sơ: thông tin, ảnh giấy tờ"]
+  c --> d{"Quyết định"}
+  d -- "Duyệt" --> e["isApproved = true, ghi approvedAt<br/>đảm bảo đã có Wallet"]
+  d -- "Từ chối" --> f["Nhập lý do, lưu rejectionReason"]
+  e --> g["Gửi thông báo: hồ sơ được duyệt"]
+  f --> g2["Gửi thông báo: hồ sơ bị từ chối kèm lý do"]
+  g --> h["HDV xuất hiện trong danh sách tìm kiếm<br/>và có thể nhận đơn"]
+  g2 --> z(["Kết thúc"])
+  h --> z

@@ -1,0 +1,24 @@
+digraph G { rankdir=LR; nodesep=0.12; ranksep=1.3; fontname="DejaVu Sans";
+node [fontname="DejaVu Sans", fontsize=11]; edge [color="#555555", arrowhead=none];
+
+T [label="Du khách", shape=box, style=filled, fillcolor="#DCE6F7", color="#4A5F8C", width=1.4, height=0.6];
+G [label="Hướng dẫn viên", shape=box, style=filled, fillcolor="#DCE6F7", color="#4A5F8C", width=1.4, height=0.6];
+D [label="Quản trị viên", shape=box, style=filled, fillcolor="#DCE6F7", color="#4A5F8C", width=1.4, height=0.6];
+P [label="Stripe", shape=box, style=filled, fillcolor="#EEEEEE", color="#777777"];
+Y [label="Hệ thống\n(Cron, FCM)", shape=box, style=filled, fillcolor="#EEEEEE", color="#777777"];
+subgraph cluster_s { label="Hệ thống LocalMate"; style="rounded"; color="#4A5F8C"; fontsize=12;
+node [shape=ellipse, style=filled, fillcolor="#FFFFFF", color="#4A5F8C", width=3.3, height=0.5];
+g1 [label="Xác thực và quản lý hồ sơ\n(UC01, UC02, UC13)"];
+g2 [label="Khám phá địa điểm, HDV, gợi ý AI\n(UC03, UC04, UC05, UC11, UC12)"];
+g3 [label="Đặt tour, thanh toán, hủy và hoàn tiền\n(UC06, UC07, UC08)"];
+g4 [label="Trò chuyện thời gian thực (UC09)"];
+g5 [label="Xử lý đơn, lịch rảnh, ví và rút tiền\n(UC14, UC15, UC16)"];
+g6 [label="Đánh giá hướng dẫn viên (UC10)"];
+g7 [label="Kiểm duyệt và quản trị hệ thống\n(UC17 - UC23)"];
+g8 [label="Tác vụ tự động và thông báo\n(UC24, UC25)"];
+}
+T -> g1; T -> g2; T -> g3; T -> g4; T -> g6;
+G -> g1; G -> g4; G -> g5;
+D -> g1; D -> g7;
+g3 -> P; Y -> g8;
+}

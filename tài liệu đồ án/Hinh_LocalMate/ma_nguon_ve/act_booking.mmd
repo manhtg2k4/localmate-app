@@ -1,0 +1,15 @@
+flowchart LR
+  s(["Bắt đầu"]) --> a["Du khách chọn HDV, địa điểm,<br/>ngày, giờ, loại tour"]
+  a --> b{"Loại tour?"}
+  b -- "HOURLY" --> c{"Số giờ >= 2?"}
+  c -- "Không" --> e1["Báo lỗi: tối thiểu 2 giờ"] --> a
+  c -- "Có" --> d["basePrice = hourlyRate x số giờ"]
+  b -- "DAILY" --> d2["basePrice = dailyRate (8 giờ)"]
+  d --> f["platformFee = 15% basePrice<br/>totalAmount = basePrice + platformFee"]
+  d2 --> f
+  f --> g{"HDV tồn tại<br/>và đã được duyệt?"}
+  g -- "Không" --> e2["Trả lỗi 404 / 400"] --> z(["Kết thúc"])
+  g -- "Có" --> h["Tạo Booking: status = PENDING,<br/>expiresAt = hiện tại + 30 phút"]
+  h --> i["Gửi thông báo FCM và sự kiện booking:new cho HDV"]
+  i --> j["Chuyển sang màn hình thanh toán"]
+  j --> z

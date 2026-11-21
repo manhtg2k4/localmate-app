@@ -40,7 +40,7 @@ export default function Layout() {
   };
 
   const menuItems = [
-    { key: '/', icon: <DashboardOutlined style={{ fontSize: 18 }} />, label: 'Dashboard' },
+    { key: '/', icon: <DashboardOutlined style={{ fontSize: 18 }} />, label: 'Tổng quan' },
     {
       key: '/guides',
       icon: (
@@ -48,15 +48,15 @@ export default function Layout() {
           <CheckCircleOutlined style={{ fontSize: 18, color: pendingCount > 0 ? '#f59e0b' : undefined }} />
         </Badge>
       ),
-      label: 'Guide Approvals'
+      label: 'Duyệt hướng dẫn viên'
     },
-    { key: '/users', icon: <UserOutlined style={{ fontSize: 18 }} />, label: 'Users' },
-    { key: '/bookings', icon: <CalendarOutlined style={{ fontSize: 18 }} />, label: 'Bookings' },
-    { key: '/locations', icon: <EnvironmentOutlined style={{ fontSize: 18 }} />, label: 'Locations' },
-    { key: '/reports', icon: <BarChartOutlined style={{ fontSize: 18 }} />, label: 'Reports' },
+    { key: '/users', icon: <UserOutlined style={{ fontSize: 18 }} />, label: 'Người dùng' },
+    { key: '/bookings', icon: <CalendarOutlined style={{ fontSize: 18 }} />, label: 'Quản lý đặt tour' },
+    { key: '/locations', icon: <EnvironmentOutlined style={{ fontSize: 18 }} />, label: 'Địa điểm du lịch' },
+    { key: '/reports', icon: <BarChartOutlined style={{ fontSize: 18 }} />, label: 'Báo cáo tài chính' },
   ];
 
-  const currentLabel = menuItems.find(m => m.key === location.pathname)?.label || 'Dashboard';
+  const currentLabel = menuItems.find(m => m.key === location.pathname)?.label || 'Tổng quan';
 
   const userMenu = {
     items: [
@@ -64,7 +64,7 @@ export default function Layout() {
         key: 'profile',
         label: (
           <div style={{ padding: '4px 8px' }}>
-            <Text strong style={{ display: 'block' }}>{user.fullName || 'System Admin'}</Text>
+            <Text strong style={{ display: 'block' }}>{user.fullName || 'Quản trị viên'}</Text>
             <Text type="secondary" style={{ fontSize: 12 }}>{user.email || 'admin@localmate.com'}</Text>
           </div>
         ),
@@ -73,19 +73,19 @@ export default function Layout() {
       {
         key: 'guides',
         icon: <UserSwitchOutlined />,
-        label: 'Pending Approvals',
+        label: 'Hồ sơ chờ duyệt',
         onClick: () => navigate('/guides')
       },
       {
         key: 'settings',
         icon: <SettingOutlined />,
-        label: 'Platform Settings',
+        label: 'Cài đặt hệ thống',
       },
       { type: 'divider' as const },
       {
         key: 'logout',
         icon: <LogoutOutlined style={{ color: '#ef4444' }} />,
-        label: <Text type="danger">Log Out</Text>,
+        label: <Text type="danger">Đăng xuất</Text>,
         onClick: handleLogout
       }
     ]
@@ -179,10 +179,10 @@ export default function Layout() {
 
           <Space size="large">
             <Input
-              placeholder="Search guides, bookings, users..."
+              placeholder="Tìm kiếm HDV, tour, người dùng..."
               prefix={<SearchOutlined style={{ color: '#94a3b8' }} />}
               style={{
-                width: 240,
+                width: 250,
                 borderRadius: 20,
                 background: '#f1f5f9',
                 border: '1px solid transparent'
@@ -208,9 +208,9 @@ export default function Layout() {
                 </Avatar>
                 <div style={{ display: 'none', md: 'block' } as any}>
                   <Text strong style={{ fontSize: 14, color: '#0f172a', display: 'block', lineHeight: 1.2 }}>
-                    {user?.fullName || 'Admin User'}
+                    {user?.fullName || 'Quản trị viên'}
                   </Text>
-                  <Text type="secondary" style={{ fontSize: 11 }}>Super Admin</Text>
+                  <Text type="secondary" style={{ fontSize: 11 }}>Quản trị viên cấp cao</Text>
                 </div>
               </Space>
             </Dropdown>

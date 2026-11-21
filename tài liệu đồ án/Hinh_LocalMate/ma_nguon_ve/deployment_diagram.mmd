@@ -1,0 +1,55 @@
+flowchart TB
+    subgraph ClientTiers["Client Devices (Thiết bị đầu cuối)"]
+        direction LR
+        subgraph MobileDevice["Mobile Device (Android / iOS)"]
+            App["«mobile application»<br/><b>LocalMate Mobile App</b><br/>React Native 0.74 + Expo 51<br/>(Tourist / Guide UI)"]
+            SecureStore["«storage»<br/>SecureStore<br/>(JWT Access/Refresh)"]
+            App --- SecureStore
+        end
+        subgraph AdminPC["Administrator Workstation"]
+            Browser["«web browser»<br/><b>LocalMate Admin Portal</b><br/>React 18 + Vite + Ant Design<br/>(Chrome / Safari / Firefox)"]
+        end
+    end
+
+    subgraph CloudInfra["Production Server / Cloud Host"]
+        direction TB
+        subgraph DockerHost["Docker Containerized Environment"]
+            subgraph NodeServer["Application Container (Node.js 20 LTS)"]
+                API["«subsystem»<br/><b>Express.js REST API Server</b><br/>(Port 8080)<br/>Helmet, Rate-Limiter, CORS"]
+                SocketServer["«service»<br/><b>Socket.IO WebSocket Server</b><br/>Realtime Chat & Order Events"]
+                CronServer["«background worker»<br/><b>Node-Cron Jobs</b><br/>Auto-Reject (5m) & Escrow Release (1h)"]
+            end
+            subgraph DBServer["Database Container"]
+                MongoDB[("«database»<br/><b>MongoDB 7.0 Community</b><br/>12 Collections, 2dsphere Geospatial<br/>Port 27017")]
+                Redis[("«cache»<br/><b>Redis 7 Alpine</b><br/>Session & Rate Limit Store<br/>Port 6379")]
+            end
+        end
+    end
+
+    subgraph ExternalSaaS["Third-Party Cloud Services (Dịch vụ bên thứ ba)"]
+        direction LR
+        StripeGateway["«payment gateway»<br/><b>Stripe API</b><br/>PaymentIntents & Webhooks"]
+        FCM["«push notification»<br/><b>Firebase FCM</b><br/>Google Cloud Messaging"]
+        CloudinaryCDN["«media storage»<br/><b>Cloudinary CDN</b><br/>Image Uploads & Optimizations"]
+        ClaudeAI["«LLM AI service»<br/><b>Anthropic Claude 3 Haiku</b><br/>Itinerary & Guide Recommendations"]
+        N8nEngine["«workflow automation»<br/><b>n8n Webhook Engine</b><br/>Support Chatbot Workflow"]
+        SMTPServer["«mail transfer»<br/><b>SMTP Server (Nodemailer)</b><br/>Transactional Emails"]
+    end
+
+    App -- "HTTPS / JSON (Port 443/8080)" --> API
+    Browser -- "HTTPS / JSON (Port 443/8080)" --> API
+    App -- "WSS / WebSocket (Bidirectional)" --> SocketServer
+    
+    API --> MongoDB
+    SocketServer --> MongoDB
+    CronServer --> MongoDB
+    API --> Redis
+
+    API -- "REST API (Secret Key)" --> StripeGateway
+    API -- "HTTP v1 Push API" --> FCM
+    API -- "Multipart Upload" --> CloudinaryCDN
+    API -- "REST API (Bearer Token)" --> ClaudeAI
+    API -- "HTTP Webhook (POST)" --> N8nEngine
+    API -- "SMTP Protocol" --> SMTPServer
+
+    StripeGateway -. "Webhook Callbacks (Signed)" .-> API

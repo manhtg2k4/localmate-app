@@ -1,0 +1,97 @@
+flowchart LR
+    %% Định nghĩa các Actor chuẩn UML
+    subgraph Actors["Tác nhân (Actors)"]
+        direction TB
+        Tourist["🧑‍💼 Du khách<br/><i>(Tourist)</i>"]
+        Guide["🧑‍🏫 Hướng dẫn viên<br/><i>(Local Guide)</i>"]
+        Admin["👨‍💻 Quản trị viên<br/><i>(Administrator)</i>"]
+        StripeSystem["💳 Cổng Stripe<br/><i>(Payment Gateway)</i>"]
+        CronSystem["⏰ Hệ thống tác vụ<br/><i>(Cron & FCM)</i>"]
+    end
+
+    %% Ranh giới hệ thống LocalMate
+    subgraph LocalMatePlatform["Hệ thống LocalMate (System Boundary)"]
+        direction TB
+        
+        subgraph P1["Nhóm 1: Xác thực & Hồ sơ"]
+            UC01(["UC01: Đăng ký tài khoản"])
+            UC02(["UC02: Đăng nhập & Làm mới phiên"])
+            UC13(["UC13: Đăng ký trở thành HDV"])
+        end
+
+        subgraph P2["Nhóm 2: Khám phá & Gợi ý AI"]
+            UC03(["UC03: Tìm kiếm & Lọc HDV / Địa điểm"])
+            UC04(["UC04: Xem chi tiết hồ sơ HDV"])
+            UC05(["UC05: Nhận gợi ý tour từ Claude AI"])
+            UC11(["UC11: Lưu yêu thích Bookmark"])
+            UC12(["UC12: Trò chuyện với Support Chatbot"])
+        end
+
+        subgraph P3["Nhóm 3: Đặt tour & Ký quỹ"]
+            UC06(["UC06: Tạo đơn đặt tour"])
+            UC07(["UC07: Thanh toán giữ tiền Escrow"])
+            UC08(["UC08: Hủy tour & Nhận hoàn tiền"])
+        end
+
+        subgraph P4["Nhóm 4: Tương tác & Đánh giá"]
+            UC09(["UC09: Nhắn tin trao đổi thời gian thực"])
+            UC10(["UC10: Đánh giá & Viết nhận xét"])
+        end
+
+        subgraph P5["Nhóm 5: Nghiệp vụ Hướng dẫn viên"]
+            UC14(["UC14: Xác nhận / Từ chối đơn tour"])
+            UC15(["UC15: Quản lý lịch rảnh cá nhân"])
+            UC16(["UC16: Quản lý số dư ví & Yêu cầu rút tiền"])
+        end
+
+        subgraph P6["Nhóm 6: Quản trị & Điều hành"]
+            UC17(["UC17: Xem báo cáo thống kê KPI"])
+            UC18(["UC18: Xét duyệt hồ sơ chứng chỉ HDV"])
+            UC19(["UC19: Khóa / Mở khóa tài khoản"])
+            UC20(["UC20: Quản lý danh sách đơn đặt tour"])
+            UC21(["UC21: Quản trị danh mục địa điểm"])
+            UC22(["UC22: Xử lý giải ngân rút tiền"])
+            UC23(["UC23: Kiểm duyệt đánh giá"])
+        end
+
+        subgraph P7["Nhóm 7: Tác vụ tự động"]
+            UC24(["UC24: Tự động hủy đơn quá 30 phút"])
+            UC25(["UC25: Tự động giải ngân sau 48h"])
+        end
+    end
+
+    %% Liên kết giữa Actor và Use Case
+    Tourist --- UC01
+    Tourist --- UC02
+    Tourist --- UC03
+    Tourist --- UC04
+    Tourist --- UC05
+    Tourist --- UC06
+    Tourist --- UC07
+    Tourist --- UC08
+    Tourist --- UC09
+    Tourist --- UC10
+    Tourist --- UC11
+    Tourist --- UC12
+    Tourist --- UC13
+
+    Guide --- UC01
+    Guide --- UC02
+    Guide --- UC09
+    Guide --- UC14
+    Guide --- UC15
+    Guide --- UC16
+
+    Admin --- UC02
+    Admin --- UC17
+    Admin --- UC18
+    Admin --- UC19
+    Admin --- UC20
+    Admin --- UC21
+    Admin --- UC22
+    Admin --- UC23
+
+    UC07 --- StripeSystem
+    UC08 --- StripeSystem
+    UC24 --- CronSystem
+    UC25 --- CronSystem

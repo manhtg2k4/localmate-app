@@ -1,0 +1,21 @@
+sequenceDiagram
+  actor A as Người gửi
+  participant MA as Mobile (người gửi)
+  participant IO as Socket.IO Server
+  participant DB as MongoDB
+  participant MB as Mobile (người nhận)
+  participant F as Firebase FCM
+  A->>MA: Mở màn hình chat của đơn
+  MA->>IO: connect (auth.token = JWT)
+  IO->>IO: Xác thực JWT, join room user:{id}
+  MA->>IO: join:booking {bookingId}
+  MA->>IO: GET /chat/:bookingId/messages (lịch sử)
+  A->>MA: Nhập và gửi tin nhắn
+  MA->>IO: message:send {bookingId, text, receiverId}
+  IO->>DB: Tạo Message
+  IO-->>MA: message:new (room booking:{id})
+  IO-->>MB: message:new (room booking:{id})
+  IO->>F: sendPush(fcmToken người nhận)
+  F-->>MB: Thông báo "Tin nhắn mới"
+  MB->>IO: PUT /chat/:bookingId/read
+  IO->>DB: isRead = true

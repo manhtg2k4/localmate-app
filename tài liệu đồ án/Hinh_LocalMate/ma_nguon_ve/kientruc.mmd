@@ -1,0 +1,38 @@
+flowchart TB
+  subgraph CL["Tầng ứng dụng khách"]
+    direction LR
+    M["Mobile App<br/>React Native + Expo<br/>(Du khách / Hướng dẫn viên)"]
+    A["Web Admin<br/>React + Vite + Ant Design<br/>(Quản trị viên)"]
+  end
+  subgraph BE["Backend - Node.js + Express"]
+    direction TB
+    R["REST API /api/v1<br/>JWT, phân quyền, rate limit, Helmet"]
+    S["Socket.IO<br/>chat, sự kiện đơn đặt"]
+    J["Cron Jobs<br/>tự từ chối đơn, giải ngân escrow"]
+    SV["Services<br/>Payment, AI, Notification, Email"]
+  end
+  DB[("MongoDB<br/>12 collection")]
+  subgraph EXT["Dịch vụ bên ngoài"]
+    direction LR
+    ST["Stripe<br/>thanh toán"]
+    CLD["Cloudinary<br/>lưu ảnh"]
+    FCM["Firebase FCM<br/>thông báo đẩy"]
+    AI["Claude API<br/>gợi ý địa điểm"]
+    N8["n8n Webhook<br/>chatbot hỗ trợ"]
+    SM["SMTP<br/>Nodemailer"]
+  end
+  M -- "HTTPS / JSON" --> R
+  A -- "HTTPS / JSON" --> R
+  M -- "WebSocket" --> S
+  R --> SV
+  S --> SV
+  J --> SV
+  R --> DB
+  S --> DB
+  J --> DB
+  SV --> ST
+  SV --> CLD
+  SV --> FCM
+  SV --> AI
+  SV --> N8
+  SV --> SM

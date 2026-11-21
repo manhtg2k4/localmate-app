@@ -1,0 +1,18 @@
+flowchart LR
+  s(["Bắt đầu"]) --> a["HDV nhận thông báo đơn mới (PENDING)"]
+  a --> b["HDV mở chi tiết đơn"]
+  b --> c{"Quyết định"}
+  c -- "Xác nhận" --> d["Booking = CONFIRMED"]
+  d --> d1["Thông báo + sự kiện booking:confirmed cho du khách"]
+  c -- "Từ chối" --> e["Booking = REJECTED, ghi lý do"]
+  e --> e1{"Payment đang HELD?"}
+  e1 -- "Có" --> e2["Hoàn tiền 100%"]
+  e1 -- "Không" --> e3["Bỏ qua hoàn tiền"]
+  e2 --> e4["Thông báo từ chối cho du khách"]
+  e3 --> e4
+  c -- "Không phản hồi 30 phút" --> f["Cron (5 phút/lần): tự động REJECTED<br/>và hoàn 100% nếu đã thanh toán"]
+  d1 --> g["Diễn ra tour"]
+  g --> h["HDV bấm Hoàn thành: Booking = COMPLETED<br/>totalTours tăng 1, cộng tiền vào ví"]
+  h --> z(["Kết thúc"])
+  e4 --> z
+  f --> z

@@ -1,0 +1,21 @@
+sequenceDiagram
+  actor T as Du khách
+  participant M as Mobile App
+  participant API as Backend API
+  participant S as Stripe
+  participant DB as MongoDB
+  participant G as Hướng dẫn viên
+  T->>M: Chọn "Thanh toán" cho đơn PENDING
+  M->>API: POST /payments/checkout {bookingId}
+  API->>S: Tạo PaymentIntent (totalAmount x 100, usd)
+  S-->>API: clientSecret, paymentIntentId
+  API->>DB: Tạo Payment (status = PENDING)
+  API-->>M: clientSecret
+  M->>S: Payment Sheet xác nhận thẻ
+  S-->>M: Kết quả thanh toán
+  M->>API: POST /payments/confirm {bookingId, paymentIntentId}
+  API->>DB: Payment = HELD (paidAt), Booking = CONFIRMED
+  S-)API: Webhook payment_intent.succeeded (đối soát)
+  API-->>M: 200 Payment confirmed
+  API-)G: Thông báo đơn mới (FCM + Socket)
+  Note over API,DB: Sau khi tour COMPLETED, tiền ở trạng thái HELD<br/>được giải ngân cho ví HDV (RELEASED)

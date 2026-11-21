@@ -30,17 +30,18 @@ export default function Users() {
 
   const handleBlock = (userId: string, name: string) => {
     Modal.confirm({
-      title: `Block user "${name}"?`,
-      content: 'This user will no longer be able to log in or use LocalMate services.',
-      okText: 'Confirm Block',
+      title: `Khóa tài khoản "${name}"?`,
+      content: 'Người dùng này sẽ không thể đăng nhập hoặc sử dụng dịch vụ của LocalMate.',
+      okText: 'Xác nhận khóa',
+      cancelText: 'Hủy',
       okButtonProps: { danger: true },
       onOk: async () => {
         try {
           await api.put(`/admin/users/${userId}/block`);
-          message.success(`User "${name}" has been blocked`);
+          message.success(`Đã khóa tài khoản "${name}" thành công`);
           loadUsers();
         } catch (err) {
-          message.error('Failed to block user');
+          message.error('Khóa tài khoản thất bại');
         }
       }
     });
@@ -49,77 +50,83 @@ export default function Users() {
   const handleUnblock = async (userId: string, name: string) => {
     try {
       await api.put(`/admin/users/${userId}/unblock`);
-      message.success(`User "${name}" unblocked successfully`);
+      message.success(`Đã mở khóa tài khoản "${name}" thành công`);
       loadUsers();
     } catch (err) {
-      message.error('Failed to unblock user');
+      message.error('Mở khóa tài khoản thất bại');
     }
   };
 
   const columns = [
     {
-      title: 'User Profile',
+      title: 'Người dùng',
       key: 'name',
+      width: 240,
       render: (_: any, r: any) => (
-        <Space size="middle">
-          <Avatar style={{ background: r.role === 'ADMIN' ? '#8b5cf6' : r.role === 'GUIDE' ? '#10b981' : '#3b82f6', fontWeight: 600 }}>
+        <Space size="middle" style={{ whiteSpace: 'nowrap' }}>
+          <Avatar style={{ background: r.role === 'ADMIN' ? '#8b5cf6' : r.role === 'GUIDE' ? '#10b981' : '#3b82f6', fontWeight: 600, flexShrink: 0 }}>
             {r.fullName?.[0] || 'U'}
           </Avatar>
           <div>
-            <Text strong style={{ display: 'block', fontSize: 14 }}>{r.fullName || 'User'}</Text>
-            <Text type="secondary" style={{ fontSize: 12 }}>{r.email}</Text>
+            <Text strong style={{ display: 'block', fontSize: 14, whiteSpace: 'nowrap' }}>{r.fullName || 'Người dùng'}</Text>
+            <Text type="secondary" style={{ fontSize: 12, whiteSpace: 'nowrap' }}>{r.email}</Text>
           </div>
         </Space>
       )
     },
     {
-      title: 'Role',
+      title: 'Vai trò',
       dataIndex: 'role',
       key: 'role',
+      width: 150,
       render: (r: string) => {
-        const config: Record<string, { color: string; icon: any }> = {
-          TOURIST: { color: 'blue', icon: <UserOutlined /> },
-          GUIDE: { color: 'green', icon: <TeamOutlined /> },
-          ADMIN: { color: 'purple', icon: <SafetyCertificateOutlined /> }
+        const config: Record<string, { color: string; icon: any; label: string }> = {
+          TOURIST: { color: 'blue', icon: <UserOutlined />, label: 'Khách du lịch' },
+          GUIDE: { color: 'green', icon: <TeamOutlined />, label: 'Hướng dẫn viên' },
+          ADMIN: { color: 'purple', icon: <SafetyCertificateOutlined />, label: 'Quản trị viên' }
         };
-        const cfg = config[r] || { color: 'default', icon: null };
-        return <Tag color={cfg.color} icon={cfg.icon}>{r}</Tag>;
+        const cfg = config[r] || { color: 'default', icon: null, label: r };
+        return <Tag color={cfg.color} icon={cfg.icon} style={{ whiteSpace: 'nowrap' }}>{cfg.label}</Tag>;
       }
     },
     {
-      title: 'Nationality',
+      title: 'Quốc tịch',
       dataIndex: 'nationality',
       key: 'nationality',
-      render: (n: string) => n || 'N/A'
+      width: 130,
+      render: (n: string) => <span style={{ whiteSpace: 'nowrap' }}>{n || 'Chưa cập nhật'}</span>
     },
     {
-      title: 'Status',
+      title: 'Trạng thái',
       dataIndex: 'isBlocked',
       key: 'status',
+      width: 140,
       render: (blocked: boolean) => (
-        <Tag color={blocked ? 'red' : 'green'} icon={blocked ? <StopOutlined /> : <CheckCircleOutlined />}>
-          {blocked ? 'BLOCKED' : 'ACTIVE'}
+        <Tag color={blocked ? 'red' : 'green'} icon={blocked ? <StopOutlined /> : <CheckCircleOutlined />} style={{ whiteSpace: 'nowrap' }}>
+          {blocked ? 'ĐÃ KHÓA' : 'HOẠT ĐỘNG'}
         </Tag>
       )
     },
     {
-      title: 'Joined Date',
+      title: 'Ngày tham gia',
       dataIndex: 'createdAt',
       key: 'date',
-      render: (d: string) => new Date(d).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+      width: 140,
+      render: (d: string) => <span style={{ whiteSpace: 'nowrap' }}>{new Date(d).toLocaleDateString('vi-VN')}</span>
     },
     {
-      title: 'Actions',
+      title: 'Thao tác',
       key: 'actions',
+      width: 120,
       render: (_: any, record: any) => (
         record.isBlocked ? (
           <Button
             type="primary"
             size="small"
             onClick={() => handleUnblock(record._id, record.fullName)}
-            style={{ borderRadius: 6, background: '#10b981' }}
+            style={{ borderRadius: 6, background: '#10b981', whiteSpace: 'nowrap' }}
           >
-            Unblock
+            Mở khóa
           </Button>
         ) : (
           <Button
@@ -127,9 +134,9 @@ export default function Users() {
             size="small"
             icon={<StopOutlined />}
             onClick={() => handleBlock(record._id, record.fullName)}
-            style={{ borderRadius: 6 }}
+            style={{ borderRadius: 6, whiteSpace: 'nowrap' }}
           >
-            Block
+            Khóa
           </Button>
         )
       )
@@ -140,32 +147,32 @@ export default function Users() {
     <div className="animate-fade-in">
       <Card style={{ marginBottom: 24, borderRadius: 16 }}>
         <Row justify="space-between" align="middle" gutter={[16, 16]}>
-          <Col>
+          <Col xs={24} md={14}>
             <Title level={3} style={{ margin: '0 0 4px 0', fontWeight: 700 }}>
-              User Directory ({pagination.total})
+              Danh bạ người dùng ({pagination.total})
             </Title>
             <Text type="secondary">
-              Manage accounts, roles, and access control across Tourists, Guides, and Admins.
+              Quản lý tài khoản, phân quyền và kiểm soát truy cập Khách du lịch, HDV và Quản trị viên.
             </Text>
           </Col>
-          <Col>
-            <Space size="middle">
+          <Col xs={24} md={10} style={{ textAlign: 'right' }}>
+            <Space size="middle" wrap>
               <Search
-                placeholder="Search name or email..."
+                placeholder="Tìm tên hoặc email..."
                 value={search}
                 onChange={e => setSearch(e.target.value)}
-                style={{ width: 260 }}
+                style={{ width: 220 }}
                 prefix={<SearchOutlined style={{ color: '#94a3b8' }} />}
               />
               <Select
-                value={role || 'All Roles'}
-                onChange={v => setRole(v === 'All Roles' ? '' : v)}
-                style={{ width: 140 }}
+                value={role || 'Tất cả vai trò'}
+                onChange={v => setRole(v === 'Tất cả vai trò' ? '' : v)}
+                style={{ width: 150 }}
                 options={[
-                  { value: 'All Roles', label: 'All Roles' },
-                  { value: 'TOURIST', label: 'Tourists' },
-                  { value: 'GUIDE', label: 'Guides' },
-                  { value: 'ADMIN', label: 'Admins' }
+                  { value: 'Tất cả vai trò', label: 'Tất cả vai trò' },
+                  { value: 'TOURIST', label: 'Khách du lịch' },
+                  { value: 'GUIDE', label: 'Hướng dẫn viên' },
+                  { value: 'ADMIN', label: 'Quản trị viên' }
                 ]}
               />
             </Space>
@@ -185,6 +192,7 @@ export default function Users() {
             pageSize: 10,
             onChange: page => setPagination(prev => ({ ...prev, page }))
           }}
+          scroll={{ x: 800 }}
         />
       </Card>
     </div>

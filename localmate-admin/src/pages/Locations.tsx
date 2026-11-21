@@ -81,10 +81,11 @@ export default function Locations() {
 
   const columns = [
     {
-      title: 'Location Name',
+      title: 'Tên địa điểm',
       key: 'name',
+      width: 250,
       render: (_: any, r: any) => (
-        <Space>
+        <Space style={{ whiteSpace: 'nowrap' }}>
           <div style={{
             width: 36,
             height: 36,
@@ -94,55 +95,74 @@ export default function Locations() {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            fontSize: 16
+            fontSize: 16,
+            flexShrink: 0
           }}>
             <EnvironmentOutlined />
           </div>
           <div>
-            <Text strong style={{ display: 'block', fontSize: 14 }}>{r.name}</Text>
-            <Text type="secondary" style={{ fontSize: 12 }}>{r.district ? `${r.district}, ` : ''}{r.city}</Text>
+            <Text strong style={{ display: 'block', fontSize: 14, whiteSpace: 'nowrap' }}>{r.name}</Text>
+            <Text type="secondary" style={{ fontSize: 12, whiteSpace: 'nowrap' }}>{r.district ? `${r.district}, ` : ''}{r.city}</Text>
           </div>
         </Space>
       )
     },
     {
-      title: 'Category',
+      title: 'Danh mục',
       dataIndex: 'category',
       key: 'category',
+      width: 170,
       render: (c: string) => {
         const colors: Record<string, string> = {
           CULTURE: 'purple', FOOD: 'orange', NATURE: 'green',
           SHOPPING: 'magenta', ENTERTAINMENT: 'blue', RELIGIOUS: 'cyan'
         };
-        return <Tag color={colors[c] || 'blue'}>{c}</Tag>;
+        const labels: Record<string, string> = {
+          CULTURE: 'Văn hóa - Lịch sử',
+          FOOD: 'Ẩm thực',
+          NATURE: 'Thiên nhiên',
+          SHOPPING: 'Mua sắm',
+          ENTERTAINMENT: 'Giải trí',
+          RELIGIOUS: 'Tâm linh'
+        };
+        return <Tag color={colors[c] || 'blue'} style={{ whiteSpace: 'nowrap' }}>{labels[c] || c}</Tag>;
       }
     },
     {
-      title: 'Price Tier',
+      title: 'Chi phí',
       dataIndex: 'priceRange',
       key: 'price',
+      width: 140,
       render: (p: string) => {
         const colors: Record<string, string> = {
           FREE: 'green', BUDGET: 'cyan', MODERATE: 'orange', EXPENSIVE: 'red'
         };
-        return <Tag color={colors[p] || 'default'}>{p}</Tag>;
+        const labels: Record<string, string> = {
+          FREE: 'Miễn phí',
+          BUDGET: 'Tiết kiệm ($)',
+          MODERATE: 'Trung bình ($$)',
+          EXPENSIVE: 'Cao cấp ($$$)'
+        };
+        return <Tag color={colors[p] || 'default'} style={{ whiteSpace: 'nowrap' }}>{labels[p] || p}</Tag>;
       }
     },
     {
-      title: 'Rating',
+      title: 'Đánh giá',
       dataIndex: 'ratingAvg',
       key: 'rating',
+      width: 110,
       render: (r: number) => (
-        <Space size="xs">
+        <Space size="small" style={{ whiteSpace: 'nowrap' }}>
           <Rate disabled defaultValue={r} count={1} style={{ fontSize: 14, color: '#f59e0b' }} />
           <Text strong style={{ fontSize: 13 }}>{r?.toFixed(1) || 'N/A'}</Text>
         </Space>
       )
     },
     {
-      title: 'Tags',
+      title: 'Từ khóa',
       dataIndex: 'tags',
       key: 'tags',
+      width: 200,
       render: (tags: string[]) => (
         <Space size={[0, 4]} wrap style={{ maxWidth: 200 }}>
           {tags?.slice(0, 3).map((t, idx) => (
@@ -153,20 +173,23 @@ export default function Locations() {
       )
     },
     {
-      title: 'Actions',
+      title: 'Thao tác',
       key: 'actions',
+      width: 140,
       render: (_: any, record: any) => (
-        <Space>
+        <Space style={{ whiteSpace: 'nowrap' }}>
           <Button
             icon={<EditOutlined />}
             size="small"
             onClick={() => openEdit(record)}
             style={{ borderRadius: 6 }}
           >
-            Edit
+            Sửa
           </Button>
           <Popconfirm
-            title="Are you sure you want to deactivate this destination?"
+            title="Bạn có chắc chắn muốn xóa địa điểm này?"
+            okText="Xóa"
+            cancelText="Hủy"
             onConfirm={() => handleDelete(record._id)}
           >
             <Button
@@ -185,28 +208,28 @@ export default function Locations() {
     <div className="animate-fade-in">
       <Card style={{ marginBottom: 24, borderRadius: 16 }}>
         <Row justify="space-between" align="middle" gutter={[16, 16]}>
-          <Col>
+          <Col xs={24} md={14}>
             <Title level={3} style={{ margin: '0 0 4px 0', fontWeight: 700 }}>
-              Tourist Destination Catalog ({locations.length})
+              Danh mục địa điểm du lịch ({locations.length})
             </Title>
             <Text type="secondary">
-              Manage featured locations, landmarks, and cultural spots available for tour itineraries.
+              Quản lý danh lam thắng cảnh, di tích lịch sử và địa điểm ẩm thực dành cho tour du lịch.
             </Text>
           </Col>
-          <Col>
-            <Space size="middle">
+          <Col xs={24} md={10} style={{ textAlign: 'right' }}>
+            <Space size="middle" wrap>
               <Input
-                placeholder="Search by name or city..."
+                placeholder="Tìm theo tên hoặc thành phố..."
                 prefix={<SearchOutlined style={{ color: '#94a3b8' }} />}
                 value={search}
                 onChange={e => setSearch(e.target.value)}
-                style={{ width: 240, borderRadius: 8 }}
+                style={{ width: 220, borderRadius: 8 }}
               />
               <Button icon={<SyncOutlined spin={loading} />} onClick={loadLocations} style={{ borderRadius: 8 }}>
-                Refresh
+                Làm mới
               </Button>
               <Button type="primary" icon={<PlusOutlined />} onClick={openCreate} style={{ borderRadius: 10 }}>
-                Add Location
+                Thêm địa điểm
               </Button>
             </Space>
           </Col>
@@ -220,64 +243,67 @@ export default function Locations() {
           rowKey="_id"
           loading={loading}
           pagination={{ pageSize: 10 }}
+          scroll={{ x: 950 }}
         />
       </Card>
 
       <Modal
-        title={editing ? 'Edit Location' : 'Add New Location'}
+        title={editing ? 'Chỉnh sửa địa điểm' : 'Thêm địa điểm du lịch mới'}
         open={modalOpen}
         onCancel={() => setModalOpen(false)}
         onOk={() => form.submit()}
+        okText="Lưu địa điểm"
+        cancelText="Hủy"
         width={620}
       >
         <Form form={form} layout="vertical" onFinish={handleSave} style={{ paddingTop: 12 }}>
-          <Form.Item name="name" label="Location Name" rules={[{ required: true, message: 'Please enter location name' }]}>
-            <Input placeholder="e.g. Ha Long Bay" />
+          <Form.Item name="name" label="Tên địa điểm" rules={[{ required: true, message: 'Vui lòng nhập tên địa điểm' }]}>
+            <Input placeholder="Ví dụ: Vịnh Hạ Long, Phố cổ Hội An..." />
           </Form.Item>
           <Row gutter={16}>
             <Col span={12}>
-              <Form.Item name="city" label="City" rules={[{ required: true, message: 'Please enter city' }]}>
-                <Input placeholder="e.g. Ha Long" />
+              <Form.Item name="city" label="Tỉnh / Thành phố" rules={[{ required: true, message: 'Vui lòng nhập thành phố' }]}>
+                <Input placeholder="Ví dụ: Hà Nội, Đà Nẵng..." />
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item name="district" label="District">
-                <Input placeholder="e.g. Quang Ninh" />
+              <Form.Item name="district" label="Quận / Huyện">
+                <Input placeholder="Ví dụ: Hoàn Kiếm, Ba Đình..." />
               </Form.Item>
             </Col>
           </Row>
 
           <Row gutter={16}>
             <Col span={12}>
-              <Form.Item name="category" label="Category" rules={[{ required: true }]}>
-                <Select placeholder="Select category" options={[
-                  { value: 'CULTURE', label: 'Culture & History' },
-                  { value: 'FOOD', label: 'Food & Culinary' },
-                  { value: 'NATURE', label: 'Nature & Landscape' },
-                  { value: 'SHOPPING', label: 'Shopping & Markets' },
-                  { value: 'ENTERTAINMENT', label: 'Entertainment' },
-                  { value: 'RELIGIOUS', label: 'Religious & Temples' },
+              <Form.Item name="category" label="Danh mục" rules={[{ required: true, message: 'Vui lòng chọn danh mục' }]}>
+                <Select placeholder="Chọn danh mục" options={[
+                  { value: 'CULTURE', label: 'Văn hóa & Lịch sử' },
+                  { value: 'FOOD', label: 'Ẩm thực & Món ngon' },
+                  { value: 'NATURE', label: 'Thiên nhiên & Phong cảnh' },
+                  { value: 'SHOPPING', label: 'Mua sắm & Chợ truyền thống' },
+                  { value: 'ENTERTAINMENT', label: 'Vui chơi & Giải trí' },
+                  { value: 'RELIGIOUS', label: 'Tâm linh & Đền chùa' },
                 ]} />
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item name="priceRange" label="Price Tier" rules={[{ required: true }]}>
-                <Select placeholder="Select price range" options={[
-                  { value: 'FREE', label: 'Free Admission' },
-                  { value: 'BUDGET', label: 'Budget ($)' },
-                  { value: 'MODERATE', label: 'Moderate ($$)' },
-                  { value: 'EXPENSIVE', label: 'Expensive ($$$)' },
+              <Form.Item name="priceRange" label="Mức chi phí" rules={[{ required: true, message: 'Vui lòng chọn mức giá' }]}>
+                <Select placeholder="Chọn mức giá" options={[
+                  { value: 'FREE', label: 'Miễn phí vé vào' },
+                  { value: 'BUDGET', label: 'Tiết kiệm ($)' },
+                  { value: 'MODERATE', label: 'Trung bình ($$)' },
+                  { value: 'EXPENSIVE', label: 'Cao cấp ($$$)' },
                 ]} />
               </Form.Item>
             </Col>
           </Row>
 
-          <Form.Item name="tags" label="Tags (comma separated)">
-            <Input placeholder="e.g. photography, unesco, walking, sunset" />
+          <Form.Item name="tags" label="Từ khóa (cách nhau bằng dấu phẩy)">
+            <Input placeholder="Ví dụ: chụp ảnh, unesco, ngắm hoàng hôn, ẩm thực đường phố" />
           </Form.Item>
 
-          <Form.Item name="description" label="Short Description">
-            <Input.TextArea rows={3} placeholder="Highlights, tips, and tour recommendations..." />
+          <Form.Item name="description" label="Mô tả tóm tắt">
+            <Input.TextArea rows={3} placeholder="Điểm đặc sắc, lưu ý và gợi ý lịch trình tham quan..." />
           </Form.Item>
         </Form>
       </Modal>

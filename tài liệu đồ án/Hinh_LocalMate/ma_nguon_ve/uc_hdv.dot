@@ -1,0 +1,21 @@
+digraph G { rankdir=LR; nodesep=0.12; ranksep=1.3; fontname="DejaVu Sans";
+node [fontname="DejaVu Sans", fontsize=11]; edge [color="#555555", arrowhead=none];
+A [label="Hướng dẫn viên", shape=box, style=filled, fillcolor="#DCE6F7", color="#4A5F8C", width=1.4, height=0.6];
+subgraph cluster_s { label="Hệ thống LocalMate"; style="rounded"; color="#4A5F8C"; fontsize=12;
+ node [shape=ellipse, style=filled, fillcolor="#FFFFFF", color="#4A5F8C", width=2.9, height=0.4];
+ u0 [label="UC01 Đăng ký / Đăng nhập"];
+ u1 [label="UC02 Quản lý hồ sơ cá nhân"];
+ u2 [label="UC13 Nộp hồ sơ xác thực"];
+ u3 [label="UC14 Quản lý lịch rảnh"];
+ u4 [label="UC15 Xử lý đơn đặt tour"];
+ u5 [label="UC16 Quản lý ví và rút tiền"];
+ u6 [label="UC09 Trò chuyện thời gian thực"];
+}
+A -> u0;
+A -> u1;
+A -> u2;
+A -> u3;
+A -> u4;
+A -> u5;
+A -> u6;
+}

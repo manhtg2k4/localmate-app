@@ -1,0 +1,161 @@
+classDiagram
+    direction TB
+
+    namespace Controllers {
+        class AuthController {
+            +register(req, res)
+            +login(req, res)
+            +refreshToken(req, res)
+            +getMe(req, res)
+            +logout(req, res)
+        }
+        class BookingController {
+            +create(req, res)
+            +getById(req, res)
+            +getMyBookings(req, res)
+            +confirm(req, res)
+            +reject(req, res)
+            +cancel(req, res)
+            +complete(req, res)
+        }
+        class GuideController {
+            +getAll(req, res)
+            +getById(req, res)
+            +updateProfile(req, res)
+            +updateSchedule(req, res)
+        }
+        class PaymentController {
+            +createCheckout(req, res)
+            +confirmPayment(req, res)
+            +stripeWebhook(req, res)
+        }
+        class AdminController {
+            +getDashboard(req, res)
+            +getReports(req, res)
+            +approveGuide(req, res)
+            +blockUser(req, res)
+            +handleWithdrawal(req, res)
+        }
+    }
+
+    namespace Services {
+        class PaymentService {
+            +createPaymentIntent(bookingId, amount)
+            +handlePaymentSuccess(paymentIntentId)
+            +releaseEscrow(paymentId)
+            +refundPayment(paymentId, percent)
+        }
+        class AiService {
+            +getRecommendations(preferences)
+            +extractTourKeywords(text)
+        }
+        class NotificationService {
+            +notifyUser(userId, title, body, type, data)
+            +sendPushFCM(token, message)
+        }
+        class EmailService {
+            +sendWelcomeEmail(email, name)
+            +sendBookingReceipt(email, booking)
+        }
+    }
+
+    namespace Models {
+        class User {
+            +ObjectId _id
+            +String email
+            +String passwordHash
+            +String fullName
+            +String phone
+            +String role
+            +Boolean isVerified
+            +Boolean isBlocked
+            +String fcmToken
+            +Array refreshTokens
+        }
+        class GuideProfile {
+            +ObjectId _id
+            +ObjectId userId
+            +String bio
+            +Array languages
+            +Number hourlyRate
+            +Number dailyRate
+            +Number ratingAvg
+            +Boolean isApproved
+            +Array idCardImages
+            +Array certificates
+        }
+        class Booking {
+            +ObjectId _id
+            +ObjectId touristId
+            +ObjectId guideId
+            +ObjectId locationId
+            +Date bookingDate
+            +String startTime
+            +String endTime
+            +Number basePrice
+            +Number platformFee
+            +Number totalAmount
+            +String status
+            +Date expiresAt
+        }
+        class Payment {
+            +ObjectId _id
+            +ObjectId bookingId
+            +String stripePaymentIntentId
+            +Number amount
+            +String status
+            +Date paidAt
+            +Number refundAmount
+        }
+        class Wallet {
+            +ObjectId _id
+            +ObjectId guideId
+            +Number balance
+            +Number pendingBalance
+            +Number totalEarned
+        }
+        class Location {
+            +ObjectId _id
+            +String name
+            +String category
+            +String city
+            +Object coordinates
+            +Array images
+        }
+        class Review {
+            +ObjectId _id
+            +ObjectId bookingId
+            +ObjectId guideId
+            +ObjectId touristId
+            +Number rating
+            +String comment
+        }
+    }
+
+    namespace Middleware {
+        class AuthMiddleware {
+            +authenticate(req, res, next)
+            +authorize(roles)
+        }
+    }
+
+    AuthController ..> User : xác thực & tạo token
+    BookingController --> PaymentService : xử lý ký quỹ
+    BookingController --> NotificationService : phát thông báo
+    BookingController ..> Booking : CRUD đơn đặt tour
+    PaymentController --> PaymentService : gọi logic Stripe & Escrow
+    GuideController ..> GuideProfile : quản lý hồ sơ & đơn giá
+    AdminController ..> User : duyệt HDV & khóa tài khoản
+    AdminController ..> Wallet : xử lý rút tiền
+
+    PaymentService ..> Payment : ghi nhận trạng thái HELD/RELEASED
+    PaymentService ..> Wallet : cộng số dư ví HDV
+    AiService ..> Location : lọc 50 địa điểm đưa vào prompt
+
+    User "1" *-- "0..1" GuideProfile : sở hữu
+    GuideProfile "1" *-- "1" Wallet : tài khoản ví
+    User "1" o-- "0..*" Booking : đặt tour (tourist)
+    GuideProfile "1" o-- "0..*" Booking : nhận tour (guide)
+    Booking "1" *-- "1" Payment : giao dịch ký quỹ
+    Booking "1" *-- "0..1" Review : đánh giá
+    Booking --> Location : địa điểm tham quan

@@ -18,19 +18,19 @@ export default function Login() {
       const { accessToken, user } = res.data.data;
 
       if (user.role !== 'ADMIN') {
-        message.error('Access denied. Admin account required.');
+        message.error('Truy cập bị từ chối. Yêu cầu tài khoản Quản trị viên.');
         return;
       }
 
       localStorage.setItem('accessToken', accessToken);
       localStorage.setItem('user', JSON.stringify(user));
       message.success({
-        content: `Welcome back, ${user.fullName || 'Admin'}!`,
+        content: `Chào mừng trở lại, ${user.fullName || 'Quản trị viên'}!`,
         duration: 3
       });
       navigate('/');
     } catch (err: any) {
-      message.error(err.response?.data?.message || 'Login failed. Please check your credentials.');
+      message.error(err.response?.data?.message || 'Đăng nhập thất bại. Vui lòng kiểm tra lại tài khoản và mật khẩu.');
     } finally {
       setLoading(false);
     }
@@ -41,7 +41,7 @@ export default function Login() {
       email: 'admin@localmate.com',
       password: 'admin123'
     });
-    message.info('Demo credentials populated!');
+    message.info('Đã tự động điền tài khoản mẫu!');
   };
 
   return (
@@ -109,22 +109,22 @@ export default function Login() {
           </div>
           
           <Title level={2} style={{ color: '#fff', margin: '0 0 8px 0', fontWeight: 700, letterSpacing: '-0.5px' }}>
-            LocalMate Admin
+            Quản trị LocalMate
           </Title>
           <Paragraph style={{ color: '#94a3b8', fontSize: 14, margin: 0 }}>
-            Sign in to manage tours, guides & platform activity
+            Đăng nhập để quản lý tour, hướng dẫn viên và nền tảng
           </Paragraph>
 
           <Tag icon={<SafetyCertificateOutlined />} color="processing" style={{ marginTop: 12, borderRadius: 20, padding: '2px 12px' }}>
-            Secured Admin Gateway
+            Cổng quản trị bảo mật
           </Tag>
         </div>
 
         <Form form={form} layout="vertical" onFinish={handleLogin} requiredMark={false}>
           <Form.Item
             name="email"
-            label={<Text style={{ color: '#cbd5e1', fontWeight: 500 }}>Admin Email</Text>}
-            rules={[{ required: true, message: 'Please enter your admin email', type: 'email' }]}
+            label={<Text style={{ color: '#cbd5e1', fontWeight: 500 }}>Email Quản trị viên</Text>}
+            rules={[{ required: true, message: 'Vui lòng nhập email quản trị viên', type: 'email' }]}
           >
             <Input
               size="large"
@@ -141,8 +141,8 @@ export default function Login() {
 
           <Form.Item
             name="password"
-            label={<Text style={{ color: '#cbd5e1', fontWeight: 500 }}>Password</Text>}
-            rules={[{ required: true, message: 'Please enter your password' }]}
+            label={<Text style={{ color: '#cbd5e1', fontWeight: 500 }}>Mật khẩu</Text>}
+            rules={[{ required: true, message: 'Vui lòng nhập mật khẩu' }]}
           >
             <Input.Password
               size="large"
@@ -174,7 +174,7 @@ export default function Login() {
               boxShadow: '0 8px 20px rgba(99, 102, 241, 0.35)'
             }}
           >
-            Sign In to Dashboard
+            Đăng nhập hệ thống
           </Button>
         </Form>
 
@@ -189,7 +189,7 @@ export default function Login() {
           justifyContent: 'space-between'
         }}>
           <div>
-            <Text style={{ color: '#94a3b8', fontSize: 12, display: 'block' }}>Quick Demo Account</Text>
+            <Text style={{ color: '#94a3b8', fontSize: 12, display: 'block' }}>Tài khoản mẫu nhanh</Text>
             <Text style={{ color: '#e2e8f0', fontSize: 13, fontWeight: 600 }}>admin@localmate.com</Text>
           </div>
           <Button
@@ -203,7 +203,7 @@ export default function Login() {
               fontWeight: 600
             }}
           >
-            Auto Fill
+            Tự động điền
           </Button>
         </div>
       </Card>

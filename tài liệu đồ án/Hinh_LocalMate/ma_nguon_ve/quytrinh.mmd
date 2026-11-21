@@ -1,0 +1,23 @@
+flowchart LR
+  subgraph G["Hướng dẫn viên"]
+    g1["Đăng ký tài khoản<br/>và hoàn thiện hồ sơ"] 
+    g4["Xác nhận / từ chối đơn"]
+    g5["Dẫn tour<br/>và đánh dấu hoàn thành"]
+    g6["Nhận tiền vào ví<br/>và yêu cầu rút"]
+  end
+  subgraph AD["Quản trị viên"]
+    a1["Duyệt hồ sơ<br/>hướng dẫn viên"]
+    a2["Xử lý yêu cầu rút tiền"]
+  end
+  subgraph T["Du khách"]
+    t1["Tìm địa điểm / HDV<br/>hoặc nhận gợi ý AI"]
+    t2["Tạo đơn đặt tour"]
+    t3["Thanh toán<br/>(tiền giữ ở escrow)"]
+    t4["Chat với HDV"]
+    t5["Đánh giá"]
+  end
+  g1 --> a1 --> t1
+  t1 --> t2 --> t3 --> g4
+  g4 --> t4
+  g4 --> g5 --> t5
+  g5 --> g6 --> a2

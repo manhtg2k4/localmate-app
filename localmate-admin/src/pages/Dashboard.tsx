@@ -51,74 +51,81 @@ export default function Dashboard() {
 
   const bookingColumns = [
     {
-      title: 'Tourist',
+      title: 'Khách du lịch',
       key: 'tourist',
+      width: 220,
       render: (_: any, r: any) => (
-        <Space>
-          <Avatar style={{ backgroundColor: '#6366F1' }}>
+        <Space style={{ whiteSpace: 'nowrap' }}>
+          <Avatar style={{ backgroundColor: '#6366F1', flexShrink: 0 }}>
             {r.touristId?.fullName?.[0] || 'T'}
           </Avatar>
           <div>
-            <Text strong style={{ display: 'block', fontSize: 13 }}>{r.touristId?.fullName || 'N/A'}</Text>
-            <Text type="secondary" style={{ fontSize: 11 }}>{r.touristId?.email}</Text>
+            <Text strong style={{ display: 'block', fontSize: 13, whiteSpace: 'nowrap' }}>{r.touristId?.fullName || 'N/A'}</Text>
+            <Text type="secondary" style={{ fontSize: 11, whiteSpace: 'nowrap' }}>{r.touristId?.email}</Text>
           </div>
         </Space>
       )
     },
     {
-      title: 'Guide',
+      title: 'Hướng dẫn viên',
       key: 'guide',
+      width: 180,
       render: (_: any, r: any) => (
-        <Space>
-          <Avatar style={{ backgroundColor: '#10B981' }}>
+        <Space style={{ whiteSpace: 'nowrap' }}>
+          <Avatar style={{ backgroundColor: '#10B981', flexShrink: 0 }}>
             {r.guideId?.userId?.fullName?.[0] || 'G'}
           </Avatar>
-          <Text style={{ fontSize: 13 }}>{r.guideId?.userId?.fullName || 'N/A'}</Text>
+          <Text style={{ fontSize: 13, whiteSpace: 'nowrap' }}>{r.guideId?.userId?.fullName || 'N/A'}</Text>
         </Space>
       )
     },
     {
-      title: 'Booking Date',
+      title: 'Ngày khởi hành',
       dataIndex: 'bookingDate',
       key: 'date',
-      render: (d: string) => <Text style={{ fontSize: 13 }}>{new Date(d).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</Text>
+      width: 140,
+      render: (d: string) => <span style={{ fontSize: 13, whiteSpace: 'nowrap' }}>{new Date(d).toLocaleDateString('vi-VN')}</span>
     },
     {
-      title: 'Total Amount',
+      title: 'Tổng tiền',
       dataIndex: 'totalAmount',
       key: 'amount',
+      width: 120,
       render: (a: number) => (
-        <Text strong style={{ color: '#0F172A', fontSize: 14 }}>
+        <Text strong style={{ color: '#0F172A', fontSize: 14, whiteSpace: 'nowrap' }}>
           ${a?.toFixed(2)}
         </Text>
       )
     },
     {
-      title: 'Status',
+      title: 'Trạng thái',
       dataIndex: 'status',
       key: 'status',
+      width: 130,
       render: (s: string) => {
         const config: Record<string, { color: string; label: string }> = {
-          PENDING: { color: 'gold', label: 'Pending' },
-          CONFIRMED: { color: 'green', label: 'Confirmed' },
-          COMPLETED: { color: 'blue', label: 'Completed' },
-          CANCELLED: { color: 'red', label: 'Cancelled' }
+          PENDING: { color: 'gold', label: 'Chờ duyệt' },
+          CONFIRMED: { color: 'green', label: 'Đã xác nhận' },
+          COMPLETED: { color: 'blue', label: 'Hoàn thành' },
+          CANCELLED: { color: 'red', label: 'Đã hủy' }
         };
         const c = config[s] || { color: 'default', label: s };
-        return <Tag color={c.color}>{c.label}</Tag>;
+        return <Tag color={c.color} style={{ whiteSpace: 'nowrap' }}>{c.label}</Tag>;
       }
     },
     {
-      title: 'Actions',
+      title: 'Thao tác',
       key: 'actions',
+      width: 100,
       render: (_: any, record: any) => (
         <Button
           type="text"
           icon={<EyeOutlined />}
           size="small"
           onClick={() => setSelectedBooking(record)}
+          style={{ whiteSpace: 'nowrap' }}
         >
-          Details
+          Chi tiết
         </Button>
       )
     }
@@ -142,14 +149,14 @@ export default function Dashboard() {
           <Col span={16}>
             <Space style={{ marginBottom: 8 }}>
               <Tag color="cyan" icon={<CheckCircleFilled />} style={{ borderRadius: 20, padding: '2px 10px' }}>
-                All Systems Operational
+                Hệ thống hoạt động ổn định
               </Tag>
             </Space>
             <Title level={2} style={{ color: '#fff', margin: '0 0 6px 0', fontWeight: 800 }}>
-              Welcome back, LocalMate Admin! 👋
+              Chào mừng trở lại, Quản trị viên LocalMate! 👋
             </Title>
             <Paragraph style={{ color: 'rgba(255, 255, 255, 0.85)', margin: 0, fontSize: 15 }}>
-              Here is your platform performance overview for today. You have {stats.pendingGuides || 0} pending guide approvals requiring review.
+              Tổng quan tình hình hoạt động nền tảng hôm nay. Bạn có {stats.pendingGuides || 0} hồ sơ hướng dẫn viên đang chờ xét duyệt.
             </Paragraph>
           </Col>
           <Col span={8} style={{ textAlign: 'right' }}>
@@ -159,7 +166,7 @@ export default function Dashboard() {
                 onClick={loadData}
                 style={{ background: 'rgba(255, 255, 255, 0.2)', border: 'none', color: '#fff', fontWeight: 600, borderRadius: 10 }}
               >
-                Refresh Data
+                Làm mới
               </Button>
               {stats.pendingGuides > 0 && (
                 <Button
@@ -168,7 +175,7 @@ export default function Dashboard() {
                   onClick={() => navigate('/guides')}
                   style={{ background: '#fff', color: '#4f46e5', border: 'none', fontWeight: 700, borderRadius: 10 }}
                 >
-                  Review Guides ({stats.pendingGuides})
+                  Duyệt hồ sơ ({stats.pendingGuides})
                 </Button>
               )}
             </Space>
@@ -179,11 +186,11 @@ export default function Dashboard() {
       {/* 5 KPI Stat Cards */}
       <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
         {[
-          { title: 'Total Users', value: stats.totalUsers || 0, icon: <UserOutlined />, color: '#6366F1', bg: '#EEF2FF', growth: '+14%' },
-          { title: 'Active Guides', value: stats.totalGuides || 0, icon: <TeamOutlined />, color: '#10B981', bg: '#ECFDF5', growth: '+8%' },
-          { title: 'Total Bookings', value: stats.totalBookings || 0, icon: <CalendarOutlined />, color: '#F59E0B', bg: '#FFFBEB', growth: '+22%' },
-          { title: 'Platform Revenue', value: `$${(stats.totalRevenue || 0).toFixed(2)}`, icon: <DollarOutlined />, color: '#0EA5E9', bg: '#F0F9FF', growth: '+18%' },
-          { title: 'Pending Approvals', value: stats.pendingGuides || 0, icon: <ClockCircleOutlined />, color: '#EF4444', bg: '#FEF2F2', growth: 'Needs action' },
+          { title: 'Tổng người dùng', value: stats.totalUsers || 0, icon: <UserOutlined />, color: '#6366F1', bg: '#EEF2FF', growth: '+14%' },
+          { title: 'HDV đang hoạt động', value: stats.totalGuides || 0, icon: <TeamOutlined />, color: '#10B981', bg: '#ECFDF5', growth: '+8%' },
+          { title: 'Tổng số tour đặt', value: stats.totalBookings || 0, icon: <CalendarOutlined />, color: '#F59E0B', bg: '#FFFBEB', growth: '+22%' },
+          { title: 'Doanh thu sàn (10%)', value: `$${(stats.totalRevenue || 0).toFixed(2)}`, icon: <DollarOutlined />, color: '#0EA5E9', bg: '#F0F9FF', growth: '+18%' },
+          { title: 'Hồ sơ chờ duyệt', value: stats.pendingGuides || 0, icon: <ClockCircleOutlined />, color: '#EF4444', bg: '#FEF2F2', growth: 'Cần xử lý' },
         ].map(stat => (
           <Col xs={24} sm={12} md={8} lg={4.8} style={{ flex: '0 0 20%', maxWidth: '20%' }} key={stat.title}>
             <Card className="stat-card-hover" style={{ borderRadius: 16 }}>
@@ -225,10 +232,10 @@ export default function Dashboard() {
             title={
               <Space>
                 <CompassOutlined style={{ color: '#6366F1' }} />
-                <Text strong style={{ fontSize: 16 }}>Revenue & Growth Trend</Text>
+                <Text strong style={{ fontSize: 16 }}>Xu hướng doanh thu & tăng trưởng</Text>
               </Space>
             }
-            extra={<Tag color="indigo">Last 6 Months</Tag>}
+            extra={<Tag color="indigo">6 tháng qua</Tag>}
           >
             <ResponsiveContainer width="100%" height={290}>
               <AreaChart data={revenueData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
@@ -243,7 +250,7 @@ export default function Dashboard() {
                 <YAxis stroke="#94A3B8" fontSize={12} tickLine={false} axisLine={false} />
                 <Tooltip
                   contentStyle={{ background: '#0F172A', borderRadius: 12, color: '#fff', border: 'none' }}
-                  formatter={(v: any) => [`$${v}`, 'Revenue']}
+                  formatter={(v: any) => [`$${v}`, 'Doanh thu']}
                 />
                 <Area type="monotone" dataKey="revenue" stroke="#6366F1" strokeWidth={3} fillOpacity={1} fill="url(#colorRev)" />
               </AreaChart>
@@ -256,7 +263,7 @@ export default function Dashboard() {
             title={
               <Space>
                 <CalendarOutlined style={{ color: '#0EA5E9' }} />
-                <Text strong style={{ fontSize: 16 }}>Bookings Volume</Text>
+                <Text strong style={{ fontSize: 16 }}>Số lượng đặt tour</Text>
               </Space>
             }
           >
@@ -277,9 +284,9 @@ export default function Dashboard() {
       <Card
         title={
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <Text strong style={{ fontSize: 16 }}>Recent Bookings Activity</Text>
+            <Text strong style={{ fontSize: 16 }}>Hoạt động đặt tour gần đây</Text>
             <Button type="link" onClick={() => navigate('/bookings')}>
-              View All Bookings <ArrowRightOutlined />
+              Xem tất cả tour <ArrowRightOutlined />
             </Button>
           </div>
         }
@@ -290,24 +297,25 @@ export default function Dashboard() {
           rowKey="_id"
           pagination={false}
           loading={loading}
+          scroll={{ x: 800 }}
         />
       </Card>
 
       {/* Details Modal */}
       <Modal
-        title={`Booking #${selectedBooking?._id?.slice(-6)}`}
+        title={`Chi tiết đơn tour #${selectedBooking?._id?.slice(-6).toUpperCase()}`}
         open={!!selectedBooking}
         onCancel={() => setSelectedBooking(null)}
         footer={null}
         width={550}
       >
         {selectedBooking && (
-          <div style={{ padding: '8px 0' }}>
-            <p><strong>Tourist:</strong> {selectedBooking.touristId?.fullName} ({selectedBooking.touristId?.email})</p>
-            <p><strong>Guide:</strong> {selectedBooking.guideId?.userId?.fullName}</p>
-            <p><strong>Date:</strong> {new Date(selectedBooking.bookingDate).toLocaleDateString()}</p>
-            <p><strong>Amount:</strong> ${selectedBooking.totalAmount}</p>
-            <p><strong>Status:</strong> <Tag color="blue">{selectedBooking.status}</Tag></p>
+          <div style={{ padding: '8px 0', fontSize: 14 }}>
+            <p><strong>Khách du lịch:</strong> {selectedBooking.touristId?.fullName} ({selectedBooking.touristId?.email})</p>
+            <p><strong>Hướng dẫn viên:</strong> {selectedBooking.guideId?.userId?.fullName}</p>
+            <p><strong>Ngày khởi hành:</strong> {new Date(selectedBooking.bookingDate).toLocaleDateString('vi-VN')}</p>
+            <p><strong>Tổng tiền:</strong> ${selectedBooking.totalAmount}</p>
+            <p><strong>Trạng thái:</strong> <Tag color="blue">{selectedBooking.status}</Tag></p>
           </div>
         )}
       </Modal>

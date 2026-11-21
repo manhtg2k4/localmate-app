@@ -1,0 +1,183 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2400 1450" width="2400" height="1450" style="background-color: #FFFFFF;">
+  <defs>
+    <style>
+      .title { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 28px; font-weight: bold; fill: #1A365D; }
+      .tier-title { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 20px; font-weight: bold; fill: #2B6CB0; }
+      .node-title { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 17px; font-weight: bold; fill: #1A202C; }
+      .artifact-name { font-family: 'SF Mono', Consolas, Monaco, monospace; font-size: 14px; font-weight: bold; fill: #2C5282; }
+      .member-text { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 13px; fill: #4A5568; }
+      .conn-label { font-family: 'SF Mono', Consolas, Monaco, monospace; font-size: 13px; font-weight: bold; fill: #C53030; }
+      .arrow { stroke: #4A5568; stroke-width: 2; fill: none; }
+      .dash-conn { stroke: #2B6CB0; stroke-width: 2.5; stroke-dasharray: 6,4; fill: none; }
+    </style>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#2B6CB0" />
+    </marker>
+  </defs>
+
+  <!-- Title -->
+  <text x="1200" y="50" class="title" text-anchor="middle">BIỂU ĐỒ TRIỂN KHAI VẬT LÝ HỆ THỐNG (UML DEPLOYMENT DIAGRAM)</text>
+
+  <!-- ==================== TẦNG CLIENT DEVICES ==================== -->
+  <rect x="50" y="80" width="2300" height="320" rx="10" fill="#F7FAFC" stroke="#CBD5E0" stroke-width="1.5" />
+  <text x="80" y="115" class="tier-title">«tier» Client Devices (Thiết Bị Đầu Cuối Người Dùng &amp; Quản Trị)</text>
+
+  <!-- Node Mobile Device -->
+  <g transform="translate(150, 140)">
+    <polygon points="0,25 25,0 800,0 775,25" fill="#E2E8F0" stroke="#718096" stroke-width="1.5" />
+    <polygon points="775,25 800,0 800,215 775,240" fill="#CBD5E0" stroke="#718096" stroke-width="1.5" />
+    <rect x="0" y="25" width="775" height="215" fill="#FFFFFF" stroke="#718096" stroke-width="1.5" />
+    <text x="30" y="60" class="node-title">«device» Smartphone (Android 10+ / iOS 15+)</text>
+    <line x1="20" y1="75" x2="755" y2="75" stroke="#E2E8F0" stroke-width="1" />
+    <rect x="40" y="90" width="695" height="125" rx="6" fill="#EBF8FF" stroke="#3182CE" stroke-width="1.5" />
+    <text x="60" y="120" class="artifact-name">«artifact» LocalMate Mobile App (Expo SDK 51 / React Native 0.74)</text>
+    <text x="60" y="150" class="member-text">- Giao diện Du khách (Khám phá, Tìm HDV, Đặt tour, AI Recommend, Stripe Payment Sheet, Chat)</text>
+    <text x="60" y="175" class="member-text">- Giao diện Hướng dẫn viên (Tổng quan đơn tour, Lịch rảnh, Ví tiền thu nhập, Yêu cầu rút tiền)</text>
+    <text x="60" y="200" class="member-text">- Lưu trữ bảo mật phiên: expo-secure-store (Access Token, Refresh Token xoay vòng)</text>
+  </g>
+
+  <!-- Node Admin PC -->
+  <g transform="translate(1450, 140)">
+    <polygon points="0,25 25,0 800,0 775,25" fill="#E2E8F0" stroke="#718096" stroke-width="1.5" />
+    <polygon points="775,25 800,0 800,215 775,240" fill="#CBD5E0" stroke="#718096" stroke-width="1.5" />
+    <rect x="0" y="25" width="775" height="215" fill="#FFFFFF" stroke="#718096" stroke-width="1.5" />
+    <text x="30" y="60" class="node-title">«device» Administrator PC (Chrome / Safari / Firefox)</text>
+    <line x1="20" y1="75" x2="755" y2="75" stroke="#E2E8F0" stroke-width="1" />
+    <rect x="40" y="90" width="695" height="125" rx="6" fill="#EBF8FF" stroke="#3182CE" stroke-width="1.5" />
+    <text x="60" y="120" class="artifact-name">«artifact» LocalMate Admin Portal (React 18 + Vite + Ant Design)</text>
+    <text x="60" y="150" class="member-text">- Bảng điều khiển KPI Dashboard &amp; Biểu đồ doanh thu Recharts</text>
+    <text x="60" y="175" class="member-text">- Phê duyệt hồ sơ HDV (Soi chiếu ảnh CCCD 2 mặt &amp; Chứng chỉ hành nghề)</text>
+    <text x="60" y="200" class="member-text">- Quản lý tài khoản (Khóa/Mở), Đơn đặt, Địa điểm GPS, Phê duyệt lệnh chuyển tiền</text>
+  </g>
+
+  <!-- ==================== TẦNG APPLICATION SERVER (DOCKER) ==================== -->
+  <rect x="50" y="460" width="2300" height="520" rx="10" fill="#F7FAFC" stroke="#CBD5E0" stroke-width="1.5" />
+  <text x="80" y="495" class="tier-title">«tier» Production Server (Máy Chủ Dịch Vụ - Docker Containerized Host)</text>
+
+  <!-- Node Docker Host -->
+  <g transform="translate(100, 520)">
+    <rect x="0" y="0" width="2200" height="430" rx="8" fill="#FFFFFF" stroke="#4A5568" stroke-width="2" />
+    <text x="30" y="35" class="node-title">«execution environment» Docker Host (Ubuntu 22.04 LTS Container Host)</text>
+
+    <!-- Node.js App Server -->
+    <g transform="translate(40, 60)">
+      <rect width="1250" height="330" rx="6" fill="#F0FFF4" stroke="#38A169" stroke-width="2" />
+      <text x="25" y="35" class="node-title">«container» Node.js Application Server (Node.js 20 LTS)</text>
+      <line x1="15" y1="50" x2="1235" y2="50" stroke="#CBD5E0" stroke-width="1" />
+
+      <rect x="25" y="65" width="570" height="115" rx="4" fill="#FFFFFF" stroke="#38A169" stroke-width="1" />
+      <text x="40" y="95" class="artifact-name">«subsystem» Express.js REST API Server</text>
+      <text x="40" y="120" class="member-text">- Cổng dịch vụ: 8080 (HTTPS / JSON)</text>
+      <text x="40" y="145" class="member-text">- Middleware: JWT Auth, Role Guard, Helmet, Rate Limit</text>
+      <text x="40" y="165" class="member-text">- 13 Controllers, 40+ API Endpoints, Swagger Docs</text>
+
+      <rect x="630" y="65" width="580" height="115" rx="4" fill="#FFFFFF" stroke="#38A169" stroke-width="1" />
+      <text x="645" y="95" class="artifact-name">«service» Socket.IO WebSocket Server</text>
+      <text x="645" y="120" class="member-text">- Kênh thời gian thực: WSS / WebSocket (Port 8080)</text>
+      <text x="645" y="145" class="member-text">- Quản lý phòng:  &amp; </text>
+      <text x="645" y="165" class="member-text">- Phát sự kiện tin nhắn mới, thông báo đơn đặt tour</text>
+
+      <rect x="25" y="195" width="1185" height="115" rx="4" fill="#FFFFFF" stroke="#38A169" stroke-width="1" />
+      <text x="40" y="225" class="artifact-name">«background worker» Node-Cron Scheduled Background Tasks</text>
+      <text x="40" y="255" class="member-text">- Tác vụ 1 (Chạy mỗi 5 phút): Quét các đơn tour PENDING quá 30 phút -> Chuyển REJECTED và hoàn tiền 100%.</text>
+      <text x="40" y="285" class="member-text">- Tác vụ 2 (Chạy mỗi 1 giờ): Quét các thanh toán HELD sau 48h từ khi tour COMPLETED -> Tự động giải ngân vào ví HDV.</text>
+    </g>
+
+    <!-- Database Containers -->
+    <g transform="translate(1330, 60)">
+      <rect width="830" height="330" rx="6" fill="#FFFDF5" stroke="#D69E2E" stroke-width="2" />
+      <text x="25" y="35" class="node-title">«container» Database &amp; Cache Services</text>
+      <line x1="15" y1="50" x2="815" y2="50" stroke="#CBD5E0" stroke-width="1" />
+
+      <rect x="25" y="65" width="780" height="135" rx="4" fill="#FFFFFF" stroke="#D69E2E" stroke-width="1" />
+      <text x="40" y="95" class="artifact-name">«database» MongoDB 7.0 Community Document Store</text>
+      <text x="40" y="125" class="member-text">- Cổng nội bộ: 27017 (MongoDB Wire Protocol)</text>
+      <text x="40" y="150" class="member-text">- 12 Collections: User, GuideProfile, Booking, Payment, Location, Wallet...</text>
+      <text x="40" y="175" class="member-text">- Chỉ mục chuyên dụng: Geospatial 2dsphere (Tìm kiếm theo bán kính km)</text>
+
+      <rect x="25" y="215" width="780" height="95" rx="4" fill="#FFFFFF" stroke="#D69E2E" stroke-width="1" />
+      <text x="40" y="245" class="artifact-name">«cache» Redis 7 Alpine In-Memory Store</text>
+      <text x="40" y="275" class="member-text">- Cổng nội bộ: 6379 (Redis Protocol)</text>
+      <text x="40" y="295" class="member-text">- Lưu trữ Token Blacklist &amp; Bộ đếm Rate-Limiting chống tấn công DoS</text>
+    </g>
+  </g>
+
+  <!-- ==================== TẦNG THIRD-PARTY CLOUD ==================== -->
+  <rect x="50" y="1040" width="2300" height="360" rx="10" fill="#F7FAFC" stroke="#CBD5E0" stroke-width="1.5" />
+  <text x="80" y="1075" class="tier-title">«tier» Third-Party External Cloud Services (Dịch Vụ Đám Mây Bên Thứ Ba)</text>
+
+  <!-- Stripe -->
+  <g transform="translate(80, 1100)">
+    <rect width="410" height="260" rx="6" fill="#FFFFFF" stroke="#6366F1" stroke-width="2" />
+    <path d="M 0 0 L 410 0 L 410 38 L 0 38 Z" fill="#6366F1" />
+    <text x="205" y="25" class="class-name">Stripe Payment Gateway</text>
+    <text x="15" y="70" class="member-text">- API: REST HTTPS (Stripe SDK v14)</text>
+    <text x="15" y="105" class="member-text">- Thanh toán ký quỹ: PaymentIntent</text>
+    <text x="15" y="140" class="member-text">- Trả tiền: Payment Sheet trên Mobile</text>
+    <text x="15" y="175" class="member-text">- Đối soát: Webhook chữ ký bảo mật</text>
+    <text x="15" y="210" class="member-text">- Hỗ trợ hoàn tiền: refund() API</text>
+  </g>
+
+  <!-- Firebase FCM -->
+  <g transform="translate(530, 1100)">
+    <rect width="410" height="260" rx="6" fill="#FFFFFF" stroke="#EA580C" stroke-width="2" />
+    <path d="M 0 0 L 410 0 L 410 38 L 0 38 Z" fill="#EA580C" />
+    <text x="205" y="25" class="class-name">Firebase Cloud Messaging</text>
+    <text x="15" y="70" class="member-text">- API: HTTP v1 Protocol (FCM SDK)</text>
+    <text x="15" y="105" class="member-text">- Gửi thông báo đẩy (Push Notifications)</text>
+    <text x="15" y="140" class="member-text">- Nhận đơn mới cho HDV</text>
+    <text x="15" y="175" class="member-text">- Thông báo duyệt hồ sơ &amp; thanh toán</text>
+    <text x="15" y="210" class="member-text">- Đồng bộ tin nhắn chat khi tắt app</text>
+  </g>
+
+  <!-- Cloudinary -->
+  <g transform="translate(980, 1100)">
+    <rect width="410" height="260" rx="6" fill="#FFFFFF" stroke="#0284C7" stroke-width="2" />
+    <path d="M 0 0 L 410 0 L 410 38 L 0 38 Z" fill="#0284C7" />
+    <text x="205" y="25" class="class-name">Cloudinary Media CDN</text>
+    <text x="15" y="70" class="member-text">- API: Multipart Upload API</text>
+    <text x="15" y="105" class="member-text">- Lưu trữ ảnh CCCD / Hộ chiếu HDV</text>
+    <text x="15" y="140" class="member-text">- Lưu chứng chỉ hành nghề du lịch</text>
+    <text x="15" y="175" class="member-text">- Tối ưu hóa ảnh địa điểm du lịch</text>
+    <text x="15" y="210" class="member-text">- Truyền tải CDN tốc độ cao toàn cầu</text>
+  </g>
+
+  <!-- Claude AI -->
+  <g transform="translate(1430, 1100)">
+    <rect width="430" height="260" rx="6" fill="#FFFFFF" stroke="#9333EA" stroke-width="2" />
+    <path d="M 0 0 L 430 0 L 430 38 L 0 38 Z" fill="#9333EA" />
+    <text x="215" y="25" class="class-name">Anthropic Claude 3 Haiku</text>
+    <text x="15" y="70" class="member-text">- Model: claude-3-haiku-20240307</text>
+    <text x="15" y="105" class="member-text">- Nhận sở thích &amp; ngân sách du khách</text>
+    <text x="15" y="140" class="member-text">- Phân tích 50 địa danh từ MongoDB</text>
+    <text x="15" y="175" class="member-text">- Xuất JSON lịch trình chi tiết</text>
+    <text x="15" y="210" class="member-text">- Cơ chế Fallback tự động khi lỗi</text>
+  </g>
+
+  <!-- n8n & SMTP -->
+  <g transform="translate(1900, 1100)">
+    <rect width="410" height="260" rx="6" fill="#FFFFFF" stroke="#475569" stroke-width="2" />
+    <path d="M 0 0 L 410 0 L 410 38 L 0 38 Z" fill="#475569" />
+    <text x="205" y="25" class="class-name">n8n Workflow &amp; Nodemailer</text>
+    <text x="15" y="70" class="member-text">- n8n Webhook: Chatbot tự động</text>
+    <text x="15" y="105" class="member-text">- Xử lý câu hỏi thường gặp FAQ</text>
+    <text x="15" y="140" class="member-text">- Nodemailer: Gửi thư điện tử SMTP</text>
+    <text x="15" y="175" class="member-text">- Thư chào mừng tài khoản mới</text>
+    <text x="15" y="210" class="member-text">- Biên lai xác nhận thanh toán tour</text>
+  </g>
+
+  <!-- ==================== GIAO THỨC & LIÊN KẾT ==================== -->
+  <line x1="550" y1="380" x2="550" y2="580" class="dash-conn" marker-end="url(#arrowhead)" />
+  <text x="565" y="435" class="conn-label">HTTPS / REST JSON (443)</text>
+  <text x="565" y="455" class="conn-label">WSS WebSocket (8080)</text>
+
+  <line x1="1850" y1="380" x2="800" y2="580" class="dash-conn" marker-end="url(#arrowhead)" />
+  <text x="1550" y="435" class="conn-label">HTTPS / REST JSON (443)</text>
+
+  <line x1="450" y1="910" x2="285" y2="1100" class="dash-conn" marker-end="url(#arrowhead)" />
+  <line x1="550" y1="910" x2="735" y2="1100" class="dash-conn" marker-end="url(#arrowhead)" />
+  <line x1="650" y1="910" x2="1185" y2="1100" class="dash-conn" marker-end="url(#arrowhead)" />
+  <line x1="750" y1="910" x2="1645" y2="1100" class="dash-conn" marker-end="url(#arrowhead)" />
+  <line x1="850" y1="910" x2="2105" y2="1100" class="dash-conn" marker-end="url(#arrowhead)" />
+
+</svg>

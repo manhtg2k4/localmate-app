@@ -34,11 +34,11 @@ export default function GuideApproval() {
     setActing(true);
     try {
       await api.put(`/admin/guides/${guideId}/approve`, { approve: true });
-      message.success('Guide approved successfully!');
+      message.success('Đã phê duyệt hồ sơ hướng dẫn viên thành công!');
       setModalOpen(false);
       loadGuides();
     } catch (err) {
-      message.error('Failed to approve guide');
+      message.error('Phê duyệt hướng dẫn viên thất bại');
     } finally {
       setActing(false);
     }
@@ -46,19 +46,19 @@ export default function GuideApproval() {
 
   const handleReject = async () => {
     if (!rejectReason.trim()) {
-      message.warning('Please provide a reason for rejection');
+      message.warning('Vui lòng nhập lý do từ chối');
       return;
     }
     setActing(true);
     try {
       await api.put(`/admin/guides/${selectedGuide._id}/approve`, { approve: false, reason: rejectReason });
-      message.success('Guide application rejected');
+      message.success('Đã từ chối hồ sơ ứng viên');
       setRejectModalOpen(false);
       setRejectReason('');
       setModalOpen(false);
       loadGuides();
     } catch (err) {
-      message.error('Failed to reject guide application');
+      message.error('Thao tác từ chối thất bại');
     } finally {
       setActing(false);
     }
@@ -73,30 +73,33 @@ export default function GuideApproval() {
 
   const columns = [
     {
-      title: 'Guide Applicant',
+      title: 'Ứng viên HDV',
       key: 'name',
+      width: 260,
       render: (_: any, r: any) => (
-        <Space size="middle">
-          <Avatar size={42} style={{ background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)', fontWeight: 700 }}>
+        <Space size="middle" style={{ whiteSpace: 'nowrap' }}>
+          <Avatar size={42} style={{ background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)', fontWeight: 700, flexShrink: 0 }}>
             {r.userId?.fullName?.[0] || 'G'}
           </Avatar>
           <div>
-            <Text strong style={{ display: 'block', fontSize: 14 }}>{r.userId?.fullName || 'Anonymous'}</Text>
-            <Text type="secondary" style={{ fontSize: 12 }}>{r.userId?.email}</Text>
+            <Text strong style={{ display: 'block', fontSize: 14, whiteSpace: 'nowrap' }}>{r.userId?.fullName || 'Ẩn danh'}</Text>
+            <Text type="secondary" style={{ fontSize: 12, whiteSpace: 'nowrap' }}>{r.userId?.email}</Text>
           </div>
         </Space>
       )
     },
     {
-      title: 'Nationality',
+      title: 'Quốc tịch',
       dataIndex: ['userId', 'nationality'],
       key: 'nationality',
-      render: (nat: string) => <Tag color="geekblue" icon={<GlobalOutlined />}>{nat || 'Vietnam'}</Tag>
+      width: 140,
+      render: (nat: string) => <Tag color="geekblue" icon={<GlobalOutlined />} style={{ whiteSpace: 'nowrap' }}>{nat || 'Việt Nam'}</Tag>
     },
     {
-      title: 'Spoken Languages',
+      title: 'Ngôn ngữ',
       dataIndex: 'languages',
       key: 'languages',
+      width: 200,
       render: (langs: string[]) => (
         <Space size={[0, 4]} wrap>
           {langs?.map(l => <Tag color="blue" key={l}>{l}</Tag>)}
@@ -104,38 +107,42 @@ export default function GuideApproval() {
       )
     },
     {
-      title: 'Experience',
+      title: 'Kinh nghiệm',
       dataIndex: 'yearsExperience',
       key: 'exp',
-      render: (y: number) => <Text strong style={{ color: '#0F172A' }}>{y || 0} yrs</Text>
+      width: 120,
+      render: (y: number) => <Text strong style={{ color: '#0F172A', whiteSpace: 'nowrap' }}>{y || 0} năm</Text>
     },
     {
-      title: 'Rates',
+      title: 'Mức giá',
       key: 'rate',
+      width: 130,
       render: (_: any, r: any) => (
-        <div>
-          <Text strong style={{ color: '#10B981', display: 'block' }}>${r.hourlyRate}/hr</Text>
-          <Text type="secondary" style={{ fontSize: 11 }}>${r.dailyRate}/day</Text>
+        <div style={{ whiteSpace: 'nowrap' }}>
+          <Text strong style={{ color: '#10B981', display: 'block' }}>${r.hourlyRate}/giờ</Text>
+          <Text type="secondary" style={{ fontSize: 11 }}>${r.dailyRate}/ngày</Text>
         </div>
       )
     },
     {
-      title: 'Applied On',
+      title: 'Ngày nộp',
       dataIndex: 'createdAt',
       key: 'date',
-      render: (d: string) => new Date(d).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+      width: 130,
+      render: (d: string) => <span style={{ whiteSpace: 'nowrap' }}>{new Date(d).toLocaleDateString('vi-VN')}</span>
     },
     {
-      title: 'Actions',
+      title: 'Thao tác',
       key: 'actions',
+      width: 260,
       render: (_: any, record: any) => (
-        <Space>
+        <Space style={{ whiteSpace: 'nowrap' }}>
           <Button
             icon={<EyeOutlined />}
             onClick={() => { setSelectedGuide(record); setModalOpen(true); }}
             style={{ borderRadius: 8 }}
           >
-            Review
+            Xem hồ sơ
           </Button>
           <Button
             type="primary"
@@ -144,7 +151,7 @@ export default function GuideApproval() {
             loading={acting}
             style={{ borderRadius: 8, background: '#10b981' }}
           >
-            Approve
+            Duyệt
           </Button>
           <Button
             danger
@@ -152,7 +159,7 @@ export default function GuideApproval() {
             onClick={() => { setSelectedGuide(record); setRejectModalOpen(true); }}
             style={{ borderRadius: 8 }}
           >
-            Reject
+            Từ chối
           </Button>
         </Space>
       )
@@ -162,22 +169,22 @@ export default function GuideApproval() {
   return (
     <div className="animate-fade-in">
       <Card style={{ marginBottom: 24, borderRadius: 16 }}>
-        <Row justify="space-between" align="middle">
-          <Col>
+        <Row justify="space-between" align="middle" gutter={[16, 16]}>
+          <Col xs={24} md={16}>
             <Title level={3} style={{ margin: '0 0 4px 0', fontWeight: 700 }}>
-              Guide Application Approvals
+              Xét duyệt hồ sơ Hướng dẫn viên
             </Title>
             <Text type="secondary">
-              Review and verify guide profiles before making them visible on the LocalMate marketplace.
+              Xem xét và xác minh hồ sơ HDV trước khi hiển thị công khai trên ứng dụng LocalMate.
             </Text>
           </Col>
-          <Col>
+          <Col xs={24} md={8} style={{ textAlign: 'right' }}>
             <Input
-              placeholder="Search guide by name or email..."
+              placeholder="Tìm kiếm theo tên hoặc email..."
               prefix={<SearchOutlined style={{ color: '#94a3b8' }} />}
               value={search}
               onChange={e => setSearch(e.target.value)}
-              style={{ width: 280, borderRadius: 10 }}
+              style={{ width: '100%', maxWidth: 280, borderRadius: 10 }}
             />
           </Col>
         </Row>
@@ -190,6 +197,7 @@ export default function GuideApproval() {
           rowKey="_id"
           loading={loading}
           pagination={{ pageSize: 10 }}
+          scroll={{ x: 1050 }}
         />
       </Card>
 
@@ -198,7 +206,7 @@ export default function GuideApproval() {
         title={
           <Space>
             <CheckCircleOutlined style={{ color: '#6366f1' }} />
-            <span>Guide Profile Verification Review</span>
+            <span>Chi tiết & Xác minh hồ sơ HDV</span>
           </Space>
         }
         open={modalOpen}
@@ -206,10 +214,10 @@ export default function GuideApproval() {
         width={720}
         footer={[
           <Button key="reject" danger icon={<CloseOutlined />} onClick={() => setRejectModalOpen(true)}>
-            Reject Application
+            Từ chối hồ sơ
           </Button>,
           <Button key="approve" type="primary" icon={<CheckOutlined />} onClick={() => handleApprove(selectedGuide?._id)} loading={acting}>
-            Approve & Publish Guide
+            Duyệt & Kích hoạt hồ sơ
           </Button>
         ]}
       >
@@ -221,10 +229,10 @@ export default function GuideApproval() {
               </Avatar>
               <div>
                 <Title level={4} style={{ margin: 0 }}>{selectedGuide.userId?.fullName}</Title>
-                <Text type="secondary">{selectedGuide.userId?.email} • {selectedGuide.userId?.nationality}</Text>
+                <Text type="secondary">{selectedGuide.userId?.email} • {selectedGuide.userId?.nationality || 'Việt Nam'}</Text>
                 <div style={{ marginTop: 4 }}>
-                  <Tag color="green">${selectedGuide.hourlyRate}/hr</Tag>
-                  <Tag color="blue">{selectedGuide.yearsExperience} Years Experience</Tag>
+                  <Tag color="green">${selectedGuide.hourlyRate}/giờ</Tag>
+                  <Tag color="blue">{selectedGuide.yearsExperience} năm kinh nghiệm</Tag>
                 </div>
               </div>
             </div>
@@ -232,25 +240,25 @@ export default function GuideApproval() {
             <Tabs defaultActiveKey="1" items={[
               {
                 key: '1',
-                label: 'Profile Overview',
+                label: 'Tổng quan hồ sơ',
                 children: (
                   <Descriptions bordered column={2} style={{ marginTop: 8 }}>
-                    <Descriptions.Item label="Languages Spoken" span={2}>{selectedGuide.languages?.join(', ')}</Descriptions.Item>
-                    <Descriptions.Item label="Coverage Areas" span={2}>{selectedGuide.areas?.join(', ') || 'N/A'}</Descriptions.Item>
-                    <Descriptions.Item label="Hourly Rate">${selectedGuide.hourlyRate}</Descriptions.Item>
-                    <Descriptions.Item label="Daily Rate">${selectedGuide.dailyRate}</Descriptions.Item>
-                    <Descriptions.Item label="Biography" span={2}>{selectedGuide.bio || 'No biography provided.'}</Descriptions.Item>
+                    <Descriptions.Item label="Ngôn ngữ giao tiếp" span={2}>{selectedGuide.languages?.join(', ')}</Descriptions.Item>
+                    <Descriptions.Item label="Khu vực hoạt động" span={2}>{selectedGuide.areas?.join(', ') || 'N/A'}</Descriptions.Item>
+                    <Descriptions.Item label="Giá theo giờ">${selectedGuide.hourlyRate}/giờ</Descriptions.Item>
+                    <Descriptions.Item label="Giá theo ngày">${selectedGuide.dailyRate}/ngày</Descriptions.Item>
+                    <Descriptions.Item label="Tiểu sử bản thân" span={2}>{selectedGuide.bio || 'Chưa cập nhật tiểu sử.'}</Descriptions.Item>
                   </Descriptions>
                 )
               },
               {
                 key: '2',
-                label: 'Verification Docs',
+                label: 'Giấy tờ xác minh',
                 children: (
                   <div style={{ padding: 16, textAlign: 'center', background: '#f8fafc', borderRadius: 12, marginTop: 8 }}>
                     <UserOutlined style={{ fontSize: 36, color: '#94a3b8', marginBottom: 8 }} />
-                    <Paragraph type="secondary">ID Card and Tour Guide Certification documents are stored securely in Cloudinary storage.</Paragraph>
-                    <Tag color="processing">Verification Status: Pending Manual Check</Tag>
+                    <Paragraph type="secondary">Ảnh CCCD / Hộ chiếu và Thẻ hướng dẫn viên du lịch được lưu trữ bảo mật trên hệ thống Cloudinary.</Paragraph>
+                    <Tag color="processing">Trạng thái: Chờ kiểm duyệt thủ công</Tag>
                   </div>
                 )
               }
@@ -261,19 +269,20 @@ export default function GuideApproval() {
 
       {/* Rejection Note Modal */}
       <Modal
-        title="Reject Application"
+        title="Từ chối hồ sơ ứng viên"
         open={rejectModalOpen}
         onCancel={() => { setRejectModalOpen(false); setRejectReason(''); }}
         onOk={handleReject}
-        okText="Confirm Rejection"
+        okText="Xác nhận từ chối"
+        cancelText="Hủy bỏ"
         okButtonProps={{ danger: true, loading: acting }}
       >
-        <Paragraph>Please specify the reason for rejecting this guide's application. An email notification will be automatically sent to the applicant.</Paragraph>
+        <Paragraph>Vui lòng ghi rõ lý do từ chối hồ sơ này. Hệ thống sẽ tự động gửi email thông báo đến ứng viên.</Paragraph>
         <TextArea
           rows={4}
           value={rejectReason}
           onChange={e => setRejectReason(e.target.value)}
-          placeholder="e.g. Identity verification document is unreadable or incomplete..."
+          placeholder="Ví dụ: Giấy tờ xác minh không rõ nét, thiếu thẻ hướng dẫn viên du lịch..."
         />
       </Modal>
     </div>

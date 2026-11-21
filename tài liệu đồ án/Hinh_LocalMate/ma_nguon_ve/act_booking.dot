@@ -1,0 +1,12 @@
+digraph A { rankdir=TB; nodesep=0.4; ranksep=0.32; fontname="DejaVu Sans";
+node [fontname="DejaVu Sans", fontsize=11, shape=box, style="rounded,filled", fillcolor="#F4F6FA", color="#5B6B8C", margin="0.15,0.08"]; edge [fontname="DejaVu Sans", fontsize=10, color="#555555"];
+s [shape=circle, label="", width=0.25, style=filled, fillcolor="#222222"]; z [shape=doublecircle, label="", width=0.22, style=filled, fillcolor="#222222"];
+a [label="Du khách chọn HDV, địa điểm, ngày, giờ, loại tour"];
+b [label="Tính giá:\nHOURLY (tối thiểu 2 giờ) = hourlyRate x số giờ\nDAILY = dailyRate (8 giờ)\nphí nền tảng 15%, tổng tiền = giá + phí"];
+c [shape=diamond, style=filled, label="HDV tồn tại\nvà đã duyệt?", fillcolor="#FFF4DC"];
+e [label="Trả lỗi (404 / 400)"];
+d [label="Tạo Booking: status = PENDING\nexpiresAt = hiện tại + 30 phút"];
+f [label="Gửi thông báo FCM và sự kiện\nbooking:new cho HDV"];
+g [label="Chuyển sang màn hình thanh toán"];
+s -> a -> b -> c; c -> e [label=" Không"]; c -> d [label=" Có"]; d -> f -> g -> z; e -> z;
+}

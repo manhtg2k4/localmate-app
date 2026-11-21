@@ -1,0 +1,14 @@
+digraph A { rankdir=TB; nodesep=0.4; ranksep=0.32; fontname="DejaVu Sans";
+node [fontname="DejaVu Sans", fontsize=11, shape=box, style="rounded,filled", fillcolor="#F4F6FA", color="#5B6B8C", margin="0.15,0.08"]; edge [fontname="DejaVu Sans", fontsize=10, color="#555555"];
+s [shape=circle, label="", width=0.25, style=filled, fillcolor="#222222"]; z [shape=doublecircle, label="", width=0.22, style=filled, fillcolor="#222222"];
+a [label="Admin mở trang Guide Approval"];
+b [label="Hệ thống tải danh sách HDV chưa duyệt\nGET /admin/guides/pending"];
+c [label="Admin xem thông tin hồ sơ\nứng viên"];
+d [shape=diamond, style=filled, fillcolor="#FFF4DC", label="Quyết định"];
+e [label="isApproved = true, ghi approvedAt\nđảm bảo đã có Wallet"];
+f [label="Nhập lý do, lưu rejectionReason"];
+g [label="Gửi thông báo: hồ sơ được duyệt"];
+g2 [label="Gửi thông báo: hồ sơ bị từ chối kèm lý do"];
+h [label="HDV xuất hiện trong danh sách tìm kiếm\nvà có thể nhận đơn"];
+s -> a -> b -> c -> d; d -> e [label=" Duyệt"]; d -> f [label=" Từ chối"]; e -> g -> h -> z; f -> g2 -> z;
+}

@@ -1,0 +1,10 @@
+stateDiagram-v2
+  direction LR
+  [*] --> PENDING: Tạo PaymentIntent
+  PENDING --> HELD: Thanh toán thành công<br/>(tiền giữ escrow)
+  HELD --> RELEASED: Giải ngân cho HDV
+  HELD --> REFUNDED: Hoàn 100%
+  HELD --> PARTIALLY_REFUNDED: Hoàn 50%
+  RELEASED --> [*]
+  REFUNDED --> [*]
+  PARTIALLY_REFUNDED --> [*]

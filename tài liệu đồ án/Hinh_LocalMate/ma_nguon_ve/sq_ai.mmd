@@ -1,0 +1,18 @@
+sequenceDiagram
+  actor T as Du khách
+  participant M as Mobile App
+  participant API as Backend API
+  participant DB as MongoDB
+  participant AI as Claude API
+  T->>M: Nhập sở thích, chọn thành phố
+  M->>API: POST /ai/recommend {preferences, city}
+  API->>DB: Lấy tối đa 50 địa điểm đang hoạt động
+  DB-->>API: Danh sách địa điểm
+  API->>AI: Prompt gồm sở thích + danh sách địa điểm (yêu cầu trả JSON)
+  alt AI phản hồi hợp lệ
+    AI-->>API: JSON 5-8 gợi ý kèm lý do
+  else Lỗi, quá thời gian 30s hoặc JSON sai
+    API->>API: Dự phòng: lấy 5 địa điểm đầu danh sách
+  end
+  API-->>M: recommendations[]
+  M-->>T: Hiển thị thẻ gợi ý, cho phép mở chi tiết địa điểm

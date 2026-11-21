@@ -1,0 +1,23 @@
+digraph U {
+  rankdir=LR; nodesep=0.18; ranksep=1.1; splines=true; compound=true;
+  fontname="DejaVu Sans"; node [fontname="DejaVu Sans", fontsize=11]; edge [color="#555555", arrowhead=none];
+  node [shape=box, style="filled", fillcolor="#DCE6F7", color="#4A5F8C", width=1.4, height=0.6];
+  TK [label="Du khách"]; HDV [label="Hướng dẫn viên"]; AD [label="Quản trị viên"];
+  node [shape=box, style="filled", fillcolor="#EEEEEE", color="#777777"]; PAY [label="Stripe"]; SYS [label="Hệ thống\n(Cron / FCM)"];
+  subgraph cluster_s { label="Hệ thống LocalMate"; style="rounded"; color="#4A5F8C"; fontsize=13;
+    node [shape=ellipse, style="filled", fillcolor="#FFFFFF", color="#4A5F8C", width=2.3, height=0.42];
+    u1 [label="UC01 Đăng ký / Đăng nhập"]; u2 [label="UC02 Quản lý hồ sơ cá nhân"];
+    u3 [label="UC03 Tìm kiếm địa điểm"]; u4 [label="UC04 Tìm kiếm HDV"]; u5 [label="UC05 Gợi ý địa điểm bằng AI"];
+    u6 [label="UC06 Đặt tour"]; u7 [label="UC07 Thanh toán trực tuyến"]; u8 [label="UC08 Hủy đơn và hoàn tiền"];
+    u9 [label="UC09 Trò chuyện thời gian thực"]; u10 [label="UC10 Đánh giá HDV"]; u11 [label="UC11 Lưu mục yêu thích"]; u12 [label="UC12 Hỏi đáp chatbot hỗ trợ"];
+    u13 [label="UC13 Nộp hồ sơ xác thực"]; u14 [label="UC14 Quản lý lịch rảnh"]; u15 [label="UC15 Xử lý đơn đặt tour"]; u16 [label="UC16 Quản lý ví và rút tiền"];
+    u17 [label="UC17 Duyệt hồ sơ HDV"]; u18 [label="UC18 Quản lý người dùng"]; u19 [label="UC19 Quản lý địa điểm"]; u20 [label="UC20 Theo dõi đơn đặt tour"];
+    u21 [label="UC21 Báo cáo tài chính"]; u22 [label="UC22 Ẩn đánh giá vi phạm"]; u23 [label="UC23 Xử lý yêu cầu rút tiền"];
+    u24 [label="UC24 Tự động hủy đơn / giải ngân"]; u25 [label="UC25 Gửi thông báo đẩy"];
+  }
+  TK -> u1; TK -> u2; TK -> u3; TK -> u4; TK -> u5; TK -> u6; TK -> u7; TK -> u8; TK -> u9; TK -> u10; TK -> u11; TK -> u12;
+  HDV -> u1; HDV -> u2; HDV -> u13; HDV -> u14; HDV -> u15; HDV -> u16; HDV -> u9;
+  AD -> u1; AD -> u17; AD -> u18; AD -> u19; AD -> u20; AD -> u21; AD -> u22; AD -> u23;
+  u7 -> PAY; SYS -> u24; SYS -> u25;
+  {rank=same; TK; HDV; AD}
+}

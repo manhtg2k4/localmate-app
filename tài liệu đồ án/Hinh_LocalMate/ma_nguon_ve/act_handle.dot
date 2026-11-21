@@ -1,0 +1,16 @@
+digraph A { rankdir=TB; nodesep=0.35; ranksep=0.32; fontname="DejaVu Sans";
+node [fontname="DejaVu Sans", fontsize=11, shape=box, style="rounded,filled", fillcolor="#F4F6FA", color="#5B6B8C", margin="0.15,0.08"]; edge [fontname="DejaVu Sans", fontsize=10, color="#555555"];
+s [shape=circle, label="", width=0.25, style=filled, fillcolor="#222222"]; z [shape=doublecircle, label="", width=0.22, style=filled, fillcolor="#222222"];
+a [label="HDV nhận thông báo đơn mới (PENDING)\nvà mở chi tiết đơn"];
+c [shape=diamond, style=filled, fillcolor="#FFF4DC", label="Quyết định"];
+d [label="Booking = CONFIRMED\nthông báo cho du khách"];
+e [label="Booking = REJECTED, ghi lý do"];
+e1 [shape=diamond, style=filled, fillcolor="#FFF4DC", label="Payment\nđang HELD?"];
+e2 [label="Hoàn tiền 100%"];
+e4 [label="Thông báo từ chối cho du khách"];
+f [label="Cron (5 phút/lần): tự động REJECTED\nvà hoàn 100% nếu đã thanh toán"];
+g [label="Diễn ra tour"];
+h [label="HDV bấm Hoàn thành: Booking = COMPLETED\ntotalTours + 1, cộng tiền vào ví HDV"];
+s -> a -> c; c -> d [label=" Xác nhận"]; c -> e [label=" Từ chối"]; c -> f [label=" Quá 30 phút"];
+d -> g -> h -> z; e -> e1; e1 -> e2 [label=" Có"]; e1 -> e4 [label=" Không"]; e2 -> e4; e4 -> z; f -> z;
+}
